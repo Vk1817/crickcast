@@ -1,412 +1,277 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Sports Live</title>
-    
-    <!-- Shaka Player UI (Needed for the player to work) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.ui.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/controls.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRICKCAST - TATA IPL 2026</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg-color: #0f0f0f;
-            --surface-color: #1a1a1a;
-            --accent-color: #3b82f6;
-            --text-color: #e5e5e5;
-            --border-color: #2a2a2a;
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.ui.min.js"></script>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/controls.min.css">
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
+<style>
+body {
+    margin: 0;
+    background: radial-gradient(circle at top, #1a0f2e, #05070a);
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            background-color: var(--surface-color);
-            border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+/* AD OVERLAY */
+#ad-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    cursor: pointer;
+}
 
-        .logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+/* HEADER */
+.header {
+    padding: 18px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ff4ecd;
+}
 
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-color);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* DROPDOWN */
+#channelDropdown {
+    width: 92%;
+    margin: 10px auto;
+    padding: 10px;
+    background: #111;
+    color: white;
+    border: none;
+}
 
-        .dropdown-container {
-            position: relative;
-            min-width: 200px;
-        }
+/* PLAYER */
+.player-card {
+    width: 92%;
+    margin: auto;
+    padding: 10px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #2a1740, #140b24);
+}
 
-        .custom-select {
-            width: 100%;
-            padding: 0.75rem 2.5rem 0.75rem 1rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-            background-color: #0f0f0f;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            appearance: none;
-            outline: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 1.25rem;
-        }
+.video-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+}
 
-        .custom-select:focus {
-            border-color: var(--accent-color);
-        }
+video {
+    width: 100%;
+    height: 100%;
+}
 
-        /* Player Area Styles */
-        .player-section {
-            width: 100%;
-        }
+/* LIVE */
+.live-box {
+    margin: 12px auto;
+    width: 90px;
+    text-align: center;
+    padding: 6px;
+    border-radius: 20px;
+    border: 1px solid red;
+    color: red;
+}
 
-        .info-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            margin-bottom: 0.5rem;
-        }
+/* TITLE */
+.match-title {
+    text-align: center;
+    font-size: 20px;
+}
 
-        .channel-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
+/* BANNER */
+.ad-box {
+    width: 92%;
+    margin: 20px auto;
+}
 
-        .channel-meta {
-            font-size: 0.85rem;
-            color: #a3a3a3;
-        }
+.ad-box img {
+    width: 100%;
+}
 
-        /* Shaka Player Container Styles */
-        .shaka-video-container {
-            width: 100%;
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            position: relative;
-            aspect-ratio: 16/9;
-        }
+/* 🔥 TELEGRAM BUTTON */
+#telegramBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    z-index: 9999;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    animation: pulse 2s infinite;
+}
 
-        video {
-            width: 100%;
-            height: 100%;
-            display: block;
-            background: #000;
-        }
+#telegramBtn img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
 
-        /* States */
-        .state-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            text-align: center;
-            color: #a3a3a3;
-        }
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0,136,204, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0,136,204, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,136,204, 0); }
+}
+</style>
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--accent-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .error-msg { color: #ef4444; }
-        .hidden { display: none !important; }
-
-        @media (max-width: 640px) {
-            .header { padding: 0.75rem 1rem; }
-            .container { padding: 1rem; }
-        }
-    </style>
 </head>
+
 <body>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <div class="logo-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-            </div>
-            Star Sports
-        </div>
-        
-        <!-- Dropdown -->
-        <div class="dropdown-container">
-            <select id="channelDropdown" class="custom-select">
-                <option value="" disabled selected>Loading channels...</option>
-            </select>
-        </div>
-    </header>
+<div id="ad-overlay" onclick="openAd()"></div>
 
-    <!-- Main Content -->
-    <main class="container">
-        
-        <!-- Initial Loading State -->
-        <div id="initialLoading" class="state-container">
-            <div class="spinner"></div>
-            <p>Fetching Star Sports channels...</p>
-        </div>
+<div class="header">TATA IPL 2026</div>
 
-        <!-- Error State -->
-        <div id="errorState" class="state-container hidden">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" style="margin-bottom: 1rem;">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <p id="errorMessage" class="error-msg font-medium">Failed to load channels</p>
-        </div>
+<select id="channelDropdown"></select>
 
-        <!-- Player Content -->
-        <div id="playerContent" class="player-section hidden">
-            <div class="info-bar">
-                <div>
-                    <div id="currentChannelName" class="channel-title">Select a Channel</div>
-                    <div id="currentChannelMeta" class="channel-meta">--</div>
-                </div>
-            </div>
-            
-            <!-- Shaka Player Container -->
-            <div class="shaka-video-container" id="videoContainer">
-                <video autoplay playsinline id="videoPlayer"></video>
-            </div>
-            <div id="playerError" class="error-msg mt-4 text-center hidden"></div>
-        </div>
+<div class="player-card">
+    <div class="video-container">
+        <video id="videoPlayer" playsinline controls></video>
+    </div>
+</div>
 
-    </main>
+<div class="live-box">● LIVE</div>
+<div class="match-title">KKR vs MI</div>
 
-    <script>
-        // --- Configuration ---
-        const API_URL = "https://tv1.akcoder777.workers.dev";
-        
-        // --- DOM Elements ---
-        const initialLoading = document.getElementById('initialLoading');
-        const errorState = document.getElementById('errorState');
-        const errorMessage = document.getElementById('errorMessage');
-        const playerContent = document.getElementById('playerContent');
-        const dropdown = document.getElementById('channelDropdown');
-        const videoElement = document.getElementById('videoPlayer');
-        const videoContainer = document.getElementById('videoContainer');
-        const playerError = document.getElementById('playerError');
-        const currentChannelName = document.getElementById('currentChannelName');
-        const currentChannelMeta = document.getElementById('currentChannelMeta');
+<div class="ad-box">
+    <a href="https://wa.me/447955881183" target="_blank">
+        <img src="https://github.com/Vk1817/IPL1/blob/main/offstump1.png?raw=true">
+    </a>
+</div>
 
-        // --- Global Player Instance ---
-        let player = null;
+<!-- 🔥 TELEGRAM BUTTON -->
 
-        // --- Sorting Logic ---
-        function getLanguageScore(lang) {
-            if (!lang) return 3;
-            const l = lang.toLowerCase();
-            if (l === 'hindi') return 1;
-            if (l === 'english') return 2;
-            return 3;
-        }
+<a href="https://t.me/+BMRZLxqFMctjMjU1" target="_blank" id="telegramBtn">
+    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
+</a>
 
-        function sortChannels(channels) {
-            return channels.sort((a, b) => {
-                const langA = getLanguageScore(a.language);
-                const langB = getLanguageScore(b.language);
-                if (langA !== langB) return langA - langB;
-                return (a.channel_name || "").localeCompare(b.channel_name || "");
-            });
-        }
+<script>
+const API_URL = "https://tv1.akcoder777.workers.dev";
 
-        // --- Player Logic (Merged from player.html) ---
-        async function initPlayer(channel) {
-            // Clear previous errors
-            playerError.classList.add('hidden');
-            playerError.innerText = '';
+let player;
+let allChannels = [];
+let currentChannel = null;
 
-            // Install Shaka Polyfills
-            shaka.polyfill.installAll();
+const priorityOrder = [
+    "star sports 1 hindi hd",
+    "star sports 2 hindi hd",
+    "star sports 1hd",
+    "star sports 2 hd",
+    "star sports kannada",
+    "star sports telugu",
+    "star sports tamil"
+];
 
-            if (!shaka.Player.isBrowserSupported()) {
-                showPlayerError("Browser not supported for playback.");
-                return;
+async function init() {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    allChannels = data.filter(ch =>
+        ch.channel_name.toLowerCase().includes("star sports")
+    );
+
+    allChannels.sort((a, b) => {
+        const aName = a.channel_name.toLowerCase();
+        const bName = b.channel_name.toLowerCase();
+
+        const aIndex = priorityOrder.findIndex(p => aName.includes(p));
+        const bIndex = priorityOrder.findIndex(p => bName.includes(p));
+
+        if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+
+        return aName.localeCompare(bName);
+    });
+
+    createDropdown();
+
+    if (allChannels.length > 0) {
+        loadChannel(allChannels[0]);
+    }
+}
+
+function createDropdown() {
+    const dropdown = document.getElementById("channelDropdown");
+
+    allChannels.forEach((ch, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.text = ch.channel_name;
+        dropdown.appendChild(opt);
+    });
+
+    dropdown.onchange = (e) => {
+        loadChannel(allChannels[e.target.value]);
+    };
+}
+
+async function loadChannel(channel) {
+    currentChannel = channel;
+
+    if (player) await player.destroy();
+
+    const video = document.getElementById("videoPlayer");
+
+    shaka.polyfill.installAll();
+    player = new shaka.Player(video);
+    new shaka.ui.Overlay(player, document.querySelector(".video-container"), video);
+
+    player.addEventListener('error', (e) => {
+        console.log("ERROR:", e.detail);
+    });
+
+    player.configure({
+        drm: {
+            clearKeys: {
+                [channel.keyId]: channel.key
             }
+        }
+    });
 
-            // Initialize Player if not already
-            if (!player) {
-                player = new shaka.Player(videoElement);
-                // Attach UI
-                new shaka.ui.Overlay(player, videoContainer, videoElement);
-            }
+    player.getNetworkingEngine().registerRequestFilter((type, request) => {
+        request.headers["Referer"] = "https://www.jiotv.com/";
+        request.headers["User-Agent"] = "plaYtv/7.1.5 (Linux;Android 13)";
 
-            // Configure Player (DRM & Network)
-            player.configure({
-                drm: {
-                    clearKeys: {
-                        [channel.keyId]: channel.key
-                    }
-                },
-                streaming: {
-                    lowLatencyMode: true,
-                    bufferingGoal: 30,
-                    rebufferingGoal: 2,
-                    bufferBehind: 30,
-                    retryParameters: {
-                        timeout: 12000,
-                        maxAttempts: 5,
-                        baseDelay: 300
-                    }
-                }
-            });
+        if (channel.cookie) {
+            request.headers["Cookie"] = channel.cookie;
 
-            // Network Filter (Headers & Cookies)
-            const cookie = channel.cookie;
-            player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                request.headers["Referer"] = "https://www.jiotv.com/";
-                request.headers["User-Agent"] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
+            const match = channel.cookie.match(/__hdnea__=([^;]+)/);
 
-                if (cookie) {
-                    request.headers["Cookie"] = cookie;
-                }
+            if (match) {
+                const token = "__hdnea__=" + match[1];
 
-                // Append cookie token to segments if needed
-                if (cookie && (type === shaka.net.NetworkingEngine.RequestType.SEGMENT || type === shaka.net.NetworkingEngine.RequestType.MANIFEST)) {
+                if (
+                    type === shaka.net.NetworkingEngine.RequestType.SEGMENT ||
+                    type === shaka.net.NetworkingEngine.RequestType.MANIFEST
+                ) {
                     if (!request.uris[0].includes("__hdnea__")) {
-                        const sep = request.uris[0].includes("?") ? "&" : "?";
-                        request.uris[0] += sep + cookie;
+                        request.uris[0] += (request.uris[0].includes("?") ? "&" : "?") + token;
                     }
                 }
-            });
-
-            try {
-                await player.load(channel.channel_url);
-                videoElement.play();
-            } catch (e) {
-                console.error(e);
-                showPlayerError("Stream failed to start. " + (e.message || ""));
             }
         }
+    });
 
-        function showPlayerError(msg) {
-            playerError.innerText = msg;
-            playerError.classList.remove('hidden');
-        }
+    await player.load(channel.channel_url);
+}
 
-        // --- Main App Logic ---
-        async function initializeApp() {
-            try {
-                // 1. Fetch
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error("Network error");
-                const allChannels = await response.json();
+function openAd() {
+    window.open("https://offstump.com/", "_blank");
+    document.getElementById("ad-overlay").style.display = "none";
+}
 
-                // 2. Filter (Star Sports NOT Select)
-                const filtered = allChannels.filter(ch => {
-                    const name = (ch.channel_name || "").toLowerCase();
-                    return name.includes("star sports") && !name.includes("select");
-                });
+window.onload = init;
+</script>
 
-                if (filtered.length === 0) throw new Error("No matching channels found.");
-
-                // 3. Sort
-                const sorted = sortChannels(filtered);
-
-                // 4. Populate Dropdown
-                dropdown.innerHTML = '';
-                sorted.forEach(ch => {
-                    const opt = document.createElement('option');
-                    opt.value = ch.channel_id;
-                    opt.textContent = ch.channel_name;
-                    // Store full data in option for easy access (simple cache)
-                    opt.dataset.json = JSON.stringify(ch);
-                    dropdown.appendChild(opt);
-                });
-
-                // 5. Show UI
-                initialLoading.classList.add('hidden');
-                playerContent.classList.remove('hidden');
-
-                // 6. Play First
-                playChannel(sorted[0]);
-
-            } catch (err) {
-                console.error(err);
-                initialLoading.classList.add('hidden');
-                errorState.classList.remove('hidden');
-                errorMessage.textContent = err.message;
-            }
-        }
-
-        function playChannel(channelData) {
-            currentChannelName.textContent = channelData.channel_name;
-            currentChannelMeta.textContent = `${channelData.language || 'Unknown'} • ${channelData.channel_genre || 'Sports'}`;
-            document.title = `${channelData.channel_name} - Live`;
-            initPlayer(channelData);
-        }
-
-        // --- Event Listeners ---
-        dropdown.addEventListener('change', (e) => {
-            const selectedOpt = e.target.options[e.target.selectedIndex];
-            if (selectedOpt && selectedOpt.dataset.json) {
-                const data = JSON.parse(selectedOpt.dataset.json);
-                playChannel(data);
-            }
-        });
-
-        // Start
-        initializeApp();
-    </script>
 </body>
 </html>
