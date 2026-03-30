@@ -15,6 +15,7 @@ body {
     color: #fff;
 }
 
+/* HEADER */
 .header {
     padding: 18px;
     text-align: center;
@@ -23,6 +24,7 @@ body {
     color: #ff4ecd;
 }
 
+/* DROPDOWN */
 #channelDropdown {
     width: 92%;
     margin: 10px auto;
@@ -30,9 +32,10 @@ body {
     background: #111;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
+/* PLAYER CARD */
 .player-card {
     width: 92%;
     margin: auto;
@@ -41,6 +44,7 @@ body {
     background: linear-gradient(145deg, #2a1740, #140b24);
 }
 
+/* VIDEO */
 .video-container {
     width: 100%;
     aspect-ratio: 16/9;
@@ -55,6 +59,7 @@ body {
     border: none;
 }
 
+/* LIVE */
 .live-box {
     margin: 12px auto;
     width: 90px;
@@ -65,11 +70,13 @@ body {
     color: red;
 }
 
+/* TITLE */
 .match-title {
     text-align: center;
     font-size: 20px;
 }
 
+/* TELEGRAM */
 #telegramBtn {
     position: fixed;
     bottom: 20px;
@@ -107,65 +114,58 @@ body {
 </div>
 
 <div class="live-box">● LIVE</div>
-<div class="match-title" id="matchTitle">SPORTS LIVE</div>
+<div class="match-title" id="matchTitle">Loading...</div>
 
 <a href="https://t.me/+BMRZLxqFMctjMjU1" target="_blank" id="telegramBtn">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
 </a>
 
 <script>
-const API_URL = "https://raw.githubusercontent.com/vaathala00/jow/main/output.json";
+const API = "https://raw.githubusercontent.com/vaathala00/jow/main/output.json";
 
 let channels = [];
 
 async function init() {
     try {
-        const res = await fetch(API_URL);
+        const res = await fetch(API);
         const data = await res.json();
 
-        // Only SPORTS channels
+        // ONLY SPORTS CHANNELS
         channels = data.filter(ch =>
             ch.group && ch.group.toLowerCase().includes("sports")
         );
 
-        createDropdown();
+        const dropdown = document.getElementById("channelDropdown");
 
-        if (channels.length > 0) {
-            loadChannel(0);
-        }
+        channels.forEach((ch, i) => {
+            const opt = document.createElement("option");
+            opt.value = i;
+            opt.textContent = ch.name;
+            dropdown.appendChild(opt);
+        });
+
+        dropdown.onchange = (e) => {
+            loadChannel(e.target.value);
+        };
+
+        // Load first channel
+        loadChannel(0);
 
     } catch (err) {
-        alert("Failed to load channels");
+        alert("Error loading channels");
         console.log(err);
     }
 }
 
-function createDropdown() {
-    const dropdown = document.getElementById("channelDropdown");
-
-    channels.forEach((ch, i) => {
-        const opt = document.createElement("option");
-        opt.value = i;
-        opt.text = ch.name;
-        dropdown.appendChild(opt);
-    });
-
-    dropdown.onchange = (e) => {
-        loadChannel(e.target.value);
-    };
-}
-
 function loadChannel(index) {
-    const channel = channels[index];
+    const ch = channels[index];
     const frame = document.getElementById("videoFrame");
 
-    // 🔥 FIX: Always use proxy player
-    const proxy = "https://dash.vodep39240327.workers.dev/?url=" + encodeURIComponent(channel.link);
+    // ✅ KEEP YOUR WORKING PLAYER SYSTEM
+    frame.src = ch.link;
 
-    frame.src = proxy;
-
-    document.getElementById("matchTitle").innerText = channel.name;
-    document.title = channel.name + " - Live";
+    document.getElementById("matchTitle").innerText = ch.name;
+    document.title = ch.name + " - Live";
 }
 
 window.onload = init;
