@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CRICKCAST - TATA IPL 2026</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -33,6 +30,7 @@ body {
     background: #111;
     color: white;
     border: none;
+    border-radius: 8px;
 }
 
 .player-card {
@@ -51,9 +49,10 @@ body {
     background: #000;
 }
 
-video {
+.video-container iframe {
     width: 100%;
     height: 100%;
+    border: none;
 }
 
 .live-box {
@@ -78,7 +77,6 @@ video {
     width: 55px;
     height: 55px;
     border-radius: 50%;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
     animation: pulse 2s infinite;
 }
 
@@ -104,12 +102,12 @@ video {
 
 <div class="player-card">
     <div class="video-container">
-        <video id="videoPlayer" playsinline controls autoplay></video>
+        <iframe id="videoFrame" allowfullscreen allow="autoplay"></iframe>
     </div>
 </div>
 
 <div class="live-box">● LIVE</div>
-<div class="match-title">SPORTS LIVE</div>
+<div class="match-title" id="matchTitle">SPORTS LIVE</div>
 
 <a href="https://t.me/+BMRZLxqFMctjMjU1" target="_blank" id="telegramBtn">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
@@ -118,94 +116,56 @@ video {
 <script>
 const API_URL = "https://raw.githubusercontent.com/vaathala00/jow/main/output.json";
 
-let player;
-let allChannels = [];
-let currentChannel = null;
+let channels = [];
 
 async function init() {
     try {
         const res = await fetch(API_URL);
         const data = await res.json();
 
-        // ONLY SPORTS CHANNELS + DIRECT LINK
-        allChannels = data
-            .filter(ch => ch.group && ch.group.toLowerCase().includes("sports"))
-            .map(ch => ({
-                channel_name: ch.name,
-                channel_url: ch.link   // IMPORTANT FIX
-            }));
+        // Only SPORTS channels
+        channels = data.filter(ch =>
+            ch.group && ch.group.toLowerCase().includes("sports")
+        );
 
         createDropdown();
 
-        if (allChannels.length > 0) {
-            loadChannel(allChannels[0]);
+        if (channels.length > 0) {
+            loadChannel(0);
         }
 
     } catch (err) {
-        alert("Channel load failed");
+        alert("Failed to load channels");
         console.log(err);
     }
 }
 
 function createDropdown() {
     const dropdown = document.getElementById("channelDropdown");
-    dropdown.innerHTML = "";
 
-    allChannels.forEach((ch, i) => {
+    channels.forEach((ch, i) => {
         const opt = document.createElement("option");
         opt.value = i;
-        opt.text = ch.channel_name;
+        opt.text = ch.name;
         dropdown.appendChild(opt);
     });
 
     dropdown.onchange = (e) => {
-        loadChannel(allChannels[e.target.value]);
+        loadChannel(e.target.value);
     };
 }
 
-async function loadChannel(channel) {
-    currentChannel = channel;
+function loadChannel(index) {
+    const channel = channels[index];
+    const frame = document.getElementById("videoFrame");
 
-    try {
-        if (player) await player.destroy();
+    // 🔥 FIX: Always use proxy player
+    const proxy = "https://dash.vodep39240327.workers.dev/?url=" + encodeURIComponent(channel.link);
 
-        const video = document.getElementById("videoPlayer");
+    frame.src = proxy;
 
-        shaka.polyfill.installAll();
-        player = new shaka.Player(video);
-
-        new shaka.ui.Overlay(player, document.querySelector(".video-container"), video);
-
-        player.addEventListener('error', (e) => {
-            console.log("SHAKA ERROR:", e.detail);
-        });
-
-        // STRONG CONFIG
-        player.configure({
-            streaming: {
-                bufferingGoal: 30,
-                rebufferingGoal: 5,
-                retryParameters: {
-                    maxAttempts: 5,
-                    baseDelay: 1000,
-                    backoffFactor: 2
-                }
-            }
-        });
-
-        // HEADERS FIX
-        player.getNetworkingEngine().registerRequestFilter((type, request) => {
-            request.headers["Referer"] = "https://www.jiotv.com/";
-            request.headers["Origin"] = "https://www.jiotv.com";
-            request.headers["User-Agent"] =
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
-        });
-
-        await player.load(channel.channel_url);
-
-    } catch (err) {
-        console.log("LOAD ERROR:", err);
-    }
+    document.getElementById("matchTitle").innerText = channel.name;
+    document.title = channel.name + " - Live";
 }
 
 window.onload = init;
