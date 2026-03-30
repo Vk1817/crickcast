@@ -19,29 +19,21 @@ body {
 .header {
     padding: 18px;
     text-align: center;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
-    color: #ff4ecd;
-}
-
-/* DROPDOWN */
-#channelDropdown {
-    width: 92%;
-    margin: 10px auto;
-    padding: 10px;
-    background: #111;
-    color: white;
-    border: none;
-    border-radius: 10px;
+    background: linear-gradient(90deg,#ff4ecd,#00eaff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* PLAYER CARD */
 .player-card {
     width: 92%;
-    margin: auto;
-    padding: 10px;
+    margin: 15px auto;
+    padding: 12px;
     border-radius: 20px;
     background: linear-gradient(145deg, #2a1740, #140b24);
+    box-shadow: 0 0 25px rgba(255, 0, 200, 0.15);
 }
 
 /* VIDEO */
@@ -59,21 +51,39 @@ body {
     border: none;
 }
 
+/* CONTROL BAR */
+.control-bar {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* CHANNEL NAME */
+.match-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
 /* LIVE */
 .live-box {
-    margin: 12px auto;
-    width: 90px;
-    text-align: center;
-    padding: 6px;
+    padding: 4px 10px;
     border-radius: 20px;
     border: 1px solid red;
     color: red;
+    font-size: 12px;
 }
 
-/* TITLE */
-.match-title {
-    text-align: center;
-    font-size: 20px;
+/* DROPDOWN */
+#channelDropdown {
+    width: 92%;
+    margin: 10px auto;
+    padding: 12px;
+    background: #0d1117;
+    color: white;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    font-size: 14px;
 }
 
 /* TELEGRAM */
@@ -81,8 +91,8 @@ body {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 55px;
-    height: 55px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     animation: pulse 2s infinite;
 }
@@ -98,23 +108,30 @@ body {
     70% { box-shadow: 0 0 0 15px rgba(0,136,204, 0); }
     100% { box-shadow: 0 0 0 0 rgba(0,136,204, 0); }
 }
+
+/* MOBILE */
+@media(max-width:600px){
+    .header { font-size: 20px; }
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">TATA IPL 2026</div>
-
-<select id="channelDropdown"></select>
+<div class="header">🏏 CRICKCAST IPL 2026</div>
 
 <div class="player-card">
     <div class="video-container">
         <iframe id="videoFrame" allowfullscreen allow="autoplay"></iframe>
     </div>
+
+    <div class="control-bar">
+        <div class="match-title" id="matchTitle">Loading...</div>
+        <div class="live-box">● LIVE</div>
+    </div>
 </div>
 
-<div class="live-box">● LIVE</div>
-<div class="match-title" id="matchTitle">Loading...</div>
+<select id="channelDropdown"></select>
 
 <a href="https://t.me/+BMRZLxqFMctjMjU1" target="_blank" id="telegramBtn">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
@@ -130,7 +147,6 @@ async function init() {
         const res = await fetch(API);
         const data = await res.json();
 
-        // ONLY SPORTS CHANNELS
         channels = data.filter(ch =>
             ch.group && ch.group.toLowerCase().includes("sports")
         );
@@ -148,7 +164,6 @@ async function init() {
             loadChannel(e.target.value);
         };
 
-        // Load first channel
         loadChannel(0);
 
     } catch (err) {
@@ -161,7 +176,7 @@ function loadChannel(index) {
     const ch = channels[index];
     const frame = document.getElementById("videoFrame");
 
-    // ✅ KEEP YOUR WORKING PLAYER SYSTEM
+    // ✅ YOUR ORIGINAL WORKING SYSTEM (UNCHANGED)
     frame.src = ch.link;
 
     document.getElementById("matchTitle").innerText = ch.name;
