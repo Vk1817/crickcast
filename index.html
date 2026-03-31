@@ -45,7 +45,7 @@ body {
     border: none;
 }
 
-/* 🔥 Overlay for Ad */
+/* 🔥 Overlay */
 .ad-overlay {
     position: absolute;
     top: 0;
@@ -54,6 +54,20 @@ body {
     height: 100%;
     z-index: 10;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🔥 Overlay Text */
+.overlay-text {
+    background: rgba(0,0,0,0.6);
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    backdrop-filter: blur(5px);
 }
 
 .control-bar {
@@ -131,8 +145,10 @@ body {
     </div>
 
 ```
-<!-- 🔥 AD OVERLAY -->
-<div class="ad-overlay" id="adOverlay"></div>
+<!-- 🔥 OVERLAY -->
+<div class="ad-overlay" id="adOverlay">
+    <div class="overlay-text">Tap to Play Live</div>
+</div>
 
 <div class="control-bar">
     <span id="currentChannelName">Loading...</span>
@@ -244,7 +260,7 @@ function changeChannel(id) {
 
 window.onload = loadChannels;
 
-// 🔥 FIRST CLICK AD (WORKING)
+// 🔥 CLICK → AD + REMOVE OVERLAY
 overlay.addEventListener("click", () => {
     window.open("https://offstump.com", "_blank");
     overlay.style.display = "none";
