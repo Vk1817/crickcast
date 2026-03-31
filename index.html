@@ -31,6 +31,7 @@ body {
     overflow: hidden;
     background: linear-gradient(145deg, #2a1740, #140b24);
     box-shadow: 0 0 25px rgba(128,0,255,0.4);
+    position: relative;
 }
 
 .my-iframe {
@@ -42,6 +43,17 @@ body {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+/* 🔥 Overlay for Ad */
+.ad-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    cursor: pointer;
 }
 
 .control-bar {
@@ -119,6 +131,9 @@ body {
     </div>
 
 ```
+<!-- 🔥 AD OVERLAY -->
+<div class="ad-overlay" id="adOverlay"></div>
+
 <div class="control-bar">
     <span id="currentChannelName">Loading...</span>
 </div>
@@ -146,6 +161,7 @@ body {
 const iframe = document.getElementById("videoFrame");
 const selector = document.getElementById("channelSelector");
 const nameDisplay = document.getElementById("currentChannelName");
+const overlay = document.getElementById("adOverlay");
 
 let allChannels = [];
 
@@ -228,15 +244,10 @@ function changeChannel(id) {
 
 window.onload = loadChannels;
 
-// 🔥 AD CLICK (ONLY ONCE)
-let adShown = false;
-const playerWrapper = document.querySelector(".player-wrapper");
-
-playerWrapper.addEventListener("click", () => {
-    if (!adShown) {
-        adShown = true;
-        window.open("https://offstump.com", "_blank");
-    }
+// 🔥 FIRST CLICK AD (WORKING)
+overlay.addEventListener("click", () => {
+    window.open("https://offstump.com", "_blank");
+    overlay.style.display = "none";
 });
 </script>
 
