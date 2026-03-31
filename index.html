@@ -16,7 +16,6 @@ body {
     color: #fff;
 }
 
-/* HEADER */
 .header {
     padding: 18px;
     text-align: center;
@@ -25,7 +24,6 @@ body {
     color: #ff4ecd;
 }
 
-/* PLAYER CARD */
 .player-wrapper {
     width: 92%;
     margin: 15px auto;
@@ -35,7 +33,6 @@ body {
     box-shadow: 0 0 25px rgba(128,0,255,0.4);
 }
 
-/* VIDEO */
 .my-iframe {
     width: 100%;
     aspect-ratio: 16/9;
@@ -47,19 +44,16 @@ body {
     border: none;
 }
 
-/* CONTROL BAR */
 .control-bar {
     padding: 10px;
     text-align: center;
     font-size: 15px;
 }
 
-/* CHANNEL NAME */
 #currentChannelName {
     font-weight: 600;
 }
 
-/* LIVE BADGE */
 .live-box {
     margin: 10px auto;
     width: 100px;
@@ -70,7 +64,6 @@ body {
     color: red;
 }
 
-/* DROPDOWN */
 .selector-area {
     width: 92%;
     margin: 10px auto;
@@ -85,7 +78,6 @@ body {
     border: none;
 }
 
-/* WHATSAPP BANNER */
 .banner {
     width: 92%;
     margin: 15px auto;
@@ -96,7 +88,6 @@ body {
     border-radius: 10px;
 }
 
-/* TELEGRAM */
 .telegram-toggle {
     position: fixed;
     bottom: 20px;
@@ -141,17 +132,13 @@ body {
     <select id="channelSelector" onchange="changeChannel(this.value)"></select>
 </div>
 
-<!-- WHATSAPP BANNER -->
-
 <div class="banner">
     <a href="https://wa.me/447955881183" target="_blank">
         <img src="https://github.com/Vk1817/IPL1/blob/main/offstumphd.jpg?raw=true">
     </a>
 </div>
 
-<!-- TELEGRAM -->
-
-<a href="https://t.me/+BMRZLxqFMctjMjU1" target="_blank" class="telegram-toggle">
+<a href="https://t.me/vaathala1" target="_blank" class="telegram-toggle">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
 </a>
 
@@ -167,9 +154,34 @@ async function loadChannels() {
         const res = await fetch("https://raw.githubusercontent.com/vaathala00/jow/main/output.json");
         const data = await res.json();
 
-        // Only sports channels
-        allChannels = data.filter(c => c.group && c.group.toLowerCase().includes("sports"));
+        const sports = data.filter(c => c.group && c.group.toLowerCase().includes("sports"));
 
+        // 🔥 YOUR EXACT ORDER
+        const order = [
+            "star sports 1 hindi hd",
+            "star sports 2 hindi hd",
+            "star sports 1",
+            "star sports 2",
+            "star sports tamil",
+            "star sports telugu",
+            "star sports kannada"
+        ];
+
+        let ordered = [];
+
+        order.forEach(name => {
+            const found = sports.find(c => c.name.toLowerCase().includes(name));
+            if (found) ordered.push(found);
+        });
+
+        // Remaining channels (optional but safe)
+        const remaining = sports.filter(c => 
+            !ordered.some(o => o.id === c.id)
+        );
+
+        allChannels = [...ordered, ...remaining];
+
+        selector.innerHTML = "";
         allChannels.forEach(ch => {
             const opt = document.createElement("option");
             opt.value = ch.id;
@@ -187,7 +199,7 @@ async function loadChannels() {
 }
 
 function loadChannel(id) {
-    const ch = allChannels.find(c => String(c.id) === String(id)); // ✅ FIXED
+    const ch = allChannels.find(c => String(c.id) === String(id));
 
     if (ch) {
         iframe.src = ch.link; // 🔒 SAME WORKING LOGIC
