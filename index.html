@@ -156,7 +156,7 @@ async function loadChannels() {
 
         const sports = data.filter(c => c.group && c.group.toLowerCase().includes("sports"));
 
-        // 🔥 YOUR EXACT ORDER
+        // 🔥 YOUR FIXED ORDER (TOP)
         const order = [
             "star sports 1 hindi hd",
             "star sports 2 hindi hd",
@@ -174,7 +174,7 @@ async function loadChannels() {
             if (found) ordered.push(found);
         });
 
-        // Remaining channels (optional but safe)
+        // Remaining channels AFTER your order
         const remaining = sports.filter(c => 
             !ordered.some(o => o.id === c.id)
         );
@@ -202,7 +202,7 @@ function loadChannel(id) {
     const ch = allChannels.find(c => String(c.id) === String(id));
 
     if (ch) {
-        iframe.src = ch.link; // 🔒 SAME WORKING LOGIC
+        iframe.src = ch.link;
         nameDisplay.textContent = ch.name;
         document.title = ch.name + " - Live";
     }
