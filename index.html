@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TATA IPL 2026 Live</title>
 
-<title>IPL 2026 Live</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 * {
@@ -17,7 +16,7 @@
 }
 
 body {
-    background: radial-gradient(circle at top, #0b1220, #020617);
+    background: radial-gradient(circle at top, #140a2e, #020617);
     color: white;
 }
 
@@ -25,34 +24,49 @@ body {
 .header {
     padding: 16px;
     text-align: center;
-    font-weight: 700;
     font-size: 22px;
-    background: linear-gradient(90deg, #1e3a8a, #2563eb);
-    letter-spacing: 1px;
-    box-shadow: 0 4px 20px rgba(37,99,235,0.5);
+    font-weight: 700;
+    background: linear-gradient(90deg, #6d28d9, #9333ea);
+    box-shadow: 0 4px 25px rgba(147,51,234,0.6);
 }
 
-/* MAIN */
+/* PLAYER BOX */
 .container {
     padding: 10px;
 }
 
-/* PLAYER */
 .player-box {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 0 40px rgba(37,99,235,0.4);
 }
 
-.player-box iframe {
+/* GLOW BORDER ANIMATION */
+.player-box::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: linear-gradient(270deg, #9333ea, #6d28d9, #9333ea);
+    background-size: 600% 600%;
+    animation: glow 6s ease infinite;
+    z-index: -1;
+}
+
+@keyframes glow {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+iframe {
     width: 100%;
     height: 230px;
     border: none;
 }
 
 /* LIVE BADGE */
-.live-badge {
+.live {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -63,13 +77,9 @@ body {
     font-weight: bold;
 }
 
-/* CHANNEL BAR */
+/* CHANNEL */
 .channel-bar {
-    margin-top: 10px;
-    padding: 12px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #020617, #0f172a);
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+    margin-top: 12px;
 }
 
 select {
@@ -79,7 +89,6 @@ select {
     border: none;
     background: rgba(255,255,255,0.08);
     color: white;
-    font-size: 15px;
 }
 
 /* CARD */
@@ -87,24 +96,12 @@ select {
     margin-top: 12px;
     padding: 16px;
     border-radius: 16px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    background: rgba(255,255,255,0.05);
     backdrop-filter: blur(12px);
-    box-shadow: 0 0 25px rgba(0,0,0,0.6);
 }
 
-/* TEXT */
-.card h3 {
-    font-size: 18px;
-    margin-bottom: 6px;
-}
-
-.card p {
-    font-size: 14px;
-    opacity: 0.85;
-}
-
-/* BUTTONS */
-.social-row {
+/* SOCIAL */
+.row {
     display: flex;
     gap: 10px;
     margin-top: 12px;
@@ -115,42 +112,27 @@ select {
     padding: 13px;
     text-align: center;
     border-radius: 12px;
-    text-decoration: none;
     color: white;
+    text-decoration: none;
     font-weight: 600;
-    transition: 0.3s;
 }
 
-/* BUTTON COLORS */
+/* COLORS */
 .telegram {
-    background: linear-gradient(135deg, #229ED9, #2563eb);
+    background: linear-gradient(135deg, #2563eb, #9333ea);
 }
 
 .instagram {
-    background: linear-gradient(135deg, #ff7a18, #ff0066);
-}
-
-.btn:hover {
-    transform: scale(1.05);
+    background: linear-gradient(135deg, #ff0066, #9333ea);
 }
 
 /* BANNER */
-.banner {
-    margin-top: 12px;
-}
-
 .banner img {
     width: 100%;
     border-radius: 14px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.6);
-}
-
-/* FOOTER SPACE FIX */
-.footer-space {
-    height: 10px;
+    margin-top: 14px;
 }
 </style>
-
 </head>
 
 <body>
@@ -160,12 +142,12 @@ select {
 <div class="container">
 
     <!-- PLAYER -->
-    <div class="player-box">
-        <div class="live-badge">🔴 LIVE</div>
-        <iframe id="player" src="https://ss1h.pages.dev/" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <div class="player-box" onclick="playWithAd()">
+        <div class="live">🔴 LIVE</div>
+        <iframe id="player" src="" allowfullscreen></iframe>
     </div>
 
-    <!-- CHANNEL SELECT -->
+    <!-- CHANNEL -->
     <div class="channel-bar">
         <select onchange="changeChannel(this.value)">
             <option value="https://ss1h.pages.dev/">Star Sports 1 Hindi HD</option>
@@ -177,20 +159,12 @@ select {
 
     <!-- COMMUNITY -->
     <div class="card">
-        <h3>🚀 Stay Connected with CrickCast</h3>
-        <p>
-            Get instant IPL updates, backup streaming links, and exclusive match content.
-            Join our growing cricket community and never miss a live moment.
-        </p>
+        <h3>🚀 Stay Connected</h3>
+        <p>Join our community for live updates, backup links & exclusive IPL content.</p>
 
-        <div class="social-row">
-            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn telegram">
-                📢 Telegram
-            </a>
-
-            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn instagram">
-                📸 Instagram
-            </a>
+        <div class="row">
+            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn telegram">📢 Telegram</a>
+            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn instagram">📸 Instagram</a>
         </div>
     </div>
 
@@ -201,13 +175,27 @@ select {
         </a>
     </div>
 
-    <div class="footer-space"></div>
-
 </div>
 
 <script>
+let currentChannel = "https://ss1h.pages.dev/";
+let adShown = false;
+
 function changeChannel(url) {
+    currentChannel = url;
     document.getElementById("player").src = url;
+}
+
+function playWithAd() {
+    if (!adShown) {
+        adShown = true;
+        window.open("https://wa.me/447955881183", "_blank");
+        setTimeout(() => {
+            document.getElementById("player").src = currentChannel;
+        }, 500);
+    } else {
+        document.getElementById("player").src = currentChannel;
+    }
 }
 </script>
 
