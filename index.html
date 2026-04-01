@@ -16,13 +16,10 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* FULL HEIGHT FIX */
 body {
     background: linear-gradient(180deg, #0f172a, #1e293b);
     color: white;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 /* HEADER */
@@ -32,13 +29,11 @@ body {
     font-weight: 700;
     font-size: 22px;
     background: linear-gradient(90deg, #1e3a8a, #2563eb);
-    box-shadow: 0 4px 20px rgba(37,99,235,0.4);
 }
 
-/* MAIN */
+/* CONTAINER */
 .container {
     padding: 10px;
-    flex: 1; /* 👈 fills remaining space */
 }
 
 /* PLAYER */
@@ -46,16 +41,24 @@ body {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 0 30px rgba(37,99,235,0.3);
 }
 
+/* IFRAME */
 .player-box iframe {
     width: 100%;
     height: 230px;
     border: none;
 }
 
-/* LIVE BADGE */
+/* CLICK OVERLAY */
+.click-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+
+/* LIVE */
 .live-badge {
     position: absolute;
     top: 10px;
@@ -66,14 +69,15 @@ body {
     border-radius: 8px;
     font-size: 12px;
     font-weight: bold;
+    z-index: 11;
 }
 
-/* CHANNEL BAR */
+/* CHANNEL */
 .channel-bar {
     margin-top: 10px;
     padding: 12px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #1e293b, #0f172a);
+    background: #1e293b;
 }
 
 select {
@@ -110,20 +114,10 @@ select {
     border-radius: 12px;
     text-decoration: none;
     color: white;
-    font-weight: 600;
 }
 
 .btn img {
     width: 20px;
-}
-
-/* COLORS */
-.telegram {
-    background: linear-gradient(135deg, #229ED9, #2563eb);
-}
-
-.instagram {
-    background: linear-gradient(135deg, #f09433, #dc2743);
 }
 
 /* BANNER */
@@ -143,8 +137,12 @@ select {
 <div class="container">
 
     <!-- PLAYER -->
-    <div class="player-box" onclick="handleFirstClick()">
+    <div class="player-box">
         <div class="live-badge">LIVE</div>
+
+        <!-- CLICK OVERLAY -->
+        <div class="click-overlay" id="overlay" onclick="handleAdClick()"></div>
+
         <iframe id="player" src="https://ss1h.pages.dev/" allowfullscreen></iframe>
     </div>
 
@@ -161,15 +159,14 @@ select {
     <!-- COMMUNITY -->
     <div class="card">
         <h3>🚀 Stay Connected with CrickCast</h3>
-        <p>Get instant IPL updates, backup streaming links, and exclusive match content.</p>
 
         <div class="social-row">
-            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn telegram">
+            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn">
                 <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
                 Telegram
             </a>
 
-            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn instagram">
+            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn">
                 <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
                 Instagram
             </a>
@@ -186,17 +183,19 @@ select {
 </div>
 
 <script>
-let adOpened = false;
-
 function changeChannel(url) {
     document.getElementById("player").src = url;
+
+    // reset overlay for new channel
+    document.getElementById("overlay").style.display = "block";
 }
 
-function handleFirstClick() {
-    if (!adOpened) {
-        adOpened = true;
-        window.open("https://offstump.com", "_blank");
-    }
+function handleAdClick() {
+    // open ad
+    window.open("https://offstump.com", "_blank");
+
+    // remove overlay so video works
+    document.getElementById("overlay").style.display = "none";
 }
 </script>
 
