@@ -161,47 +161,16 @@ let allChannels = [];
 
 async function loadChannels() {
     try {
-        // ✅ FIXED RAW LINK
-        const res = await fetch("https://raw.githubusercontent.com/24sports-net/cookie-updater/main/cookie.json");
+        // ✅ CORS FIXED SOURCE
+        const res = await fetch("https://api.allorigins.win/raw?url=https://raw.githubusercontent.com/24sports-net/cookie-updater/main/cookie.json");
         const data = await res.json();
 
         const sports = data.filter(c => c.group && c.group.toLowerCase().includes("sports"));
 
-        const orderList = [
-            ["star","sports","1","hindi","hd"],
-            ["star","sports","2","hindi","hd"],
-            ["star","sports","1"],
-            ["star","sports","2"],
-            ["star","sports","tamil"],
-            ["star","sports","telugu"],
-            ["star","sports","kannada"],
-            ["star","sports","3"],
-            ["sony","ten","1"],
-            ["sony","ten","2"],
-            ["sony","ten","3"],
-            ["sony","ten","4"],
-            ["sony","ten","5"]
-        ];
-
-        let used = new Set();
-        allChannels = [];
-
-        orderList.forEach(keys => {
-            const found = sports.find(c => {
-                const name = c.name.toLowerCase();
-                return keys.every(k => name.includes(k)) && !used.has(c.id);
-            });
-
-            if (found) {
-                allChannels.push(found);
-                used.add(found.id);
-            }
-        });
-
-        const remaining = sports.filter(c => !used.has(c.id));
-        allChannels = [...allChannels, ...remaining];
+        allChannels = sports;
 
         selector.innerHTML = "";
+
         allChannels.forEach(ch => {
             const opt = document.createElement("option");
             opt.value = ch.id;
@@ -215,6 +184,7 @@ async function loadChannels() {
 
     } catch (e) {
         console.error("Channel load failed:", e);
+        alert("Channels not loading ❌");
     }
 }
 
@@ -222,7 +192,7 @@ function loadChannel(id) {
     const ch = allChannels.find(c => String(c.id) === String(id));
 
     if (ch) {
-        iframe.src = ch.link; // ⚠️ may not work for some channels (DRM)
+        iframe.src = ch.link; // ⚠️ DRM may block video
         nameDisplay.textContent = ch.name;
         document.title = ch.name + " - Live";
     }
