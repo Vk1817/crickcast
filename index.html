@@ -16,22 +16,24 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/* LIGHTER IPL BACKGROUND */
 body {
     background: linear-gradient(180deg, #0f172a, #1e293b);
     color: white;
-    min-height: 100vh;
 }
 
-/* HEADER */
+/* HEADER (IPL BLUE + GOLD) */
 .header {
     padding: 16px;
     text-align: center;
     font-weight: 700;
     font-size: 22px;
     background: linear-gradient(90deg, #1e3a8a, #2563eb);
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.4);
 }
 
-/* CONTAINER */
+/* MAIN */
 .container {
     padding: 10px;
 }
@@ -41,24 +43,24 @@ body {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 0 30px rgba(37,99,235,0.3);
 }
 
-/* IFRAME */
 .player-box iframe {
     width: 100%;
     height: 230px;
     border: none;
 }
 
-/* CLICK OVERLAY */
+/* CLICK OVERLAY (ONLY FOR FIRST CLICK) */
 .click-overlay {
     position: absolute;
     inset: 0;
-    z-index: 10;
-    cursor: pointer;
+    z-index: 5;
+    background: transparent;
 }
 
-/* LIVE */
+/* LIVE BADGE */
 .live-badge {
     position: absolute;
     top: 10px;
@@ -69,15 +71,14 @@ body {
     border-radius: 8px;
     font-size: 12px;
     font-weight: bold;
-    z-index: 11;
 }
 
-/* CHANNEL */
+/* CHANNEL BAR */
 .channel-bar {
     margin-top: 10px;
     padding: 12px;
     border-radius: 14px;
-    background: #1e293b;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
 }
 
 select {
@@ -87,6 +88,7 @@ select {
     border: none;
     background: rgba(255,255,255,0.1);
     color: white;
+    font-size: 15px;
 }
 
 /* CARD */
@@ -95,6 +97,18 @@ select {
     padding: 16px;
     border-radius: 16px;
     background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+}
+
+/* TEXT */
+.card h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.card p {
+    font-size: 14px;
+    opacity: 0.85;
 }
 
 /* SOCIAL */
@@ -104,6 +118,7 @@ select {
     margin-top: 12px;
 }
 
+/* BUTTON */
 .btn {
     flex: 1;
     padding: 13px;
@@ -114,17 +129,42 @@ select {
     border-radius: 12px;
     text-decoration: none;
     color: white;
+    font-weight: 600;
+    transition: 0.3s;
 }
 
 .btn img {
     width: 20px;
+    height: 20px;
+}
+
+/* COLORS */
+.telegram {
+    background: linear-gradient(135deg, #229ED9, #2563eb);
+}
+
+.instagram {
+    background: linear-gradient(135deg, #f09433, #dc2743);
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255,255,255,0.2);
 }
 
 /* BANNER */
+.banner {
+    margin-top: 12px;
+}
+
 .banner img {
     width: 100%;
     border-radius: 14px;
-    margin-top: 12px;
+}
+
+/* FOOTER */
+.footer-space {
+    height: 10px;
 }
 </style>
 
@@ -140,10 +180,10 @@ select {
     <div class="player-box">
         <div class="live-badge">LIVE</div>
 
-        <!-- CLICK OVERLAY -->
+        <!-- OVERLAY FOR FIRST CLICK -->
         <div class="click-overlay" id="overlay" onclick="handleAdClick()"></div>
 
-        <iframe id="player" src="https://ss1h.pages.dev/" allowfullscreen></iframe>
+        <iframe id="player" src="https://ss1h.pages.dev/" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
     <!-- CHANNEL -->
@@ -159,14 +199,17 @@ select {
     <!-- COMMUNITY -->
     <div class="card">
         <h3>🚀 Stay Connected with CrickCast</h3>
+        <p>
+            Get instant IPL updates, backup streaming links, and exclusive match content.
+        </p>
 
         <div class="social-row">
-            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn">
+            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn telegram">
                 <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
                 Telegram
             </a>
 
-            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn">
+            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn instagram">
                 <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
                 Instagram
             </a>
@@ -180,13 +223,15 @@ select {
         </a>
     </div>
 
+    <div class="footer-space"></div>
+
 </div>
 
 <script>
 function changeChannel(url) {
     document.getElementById("player").src = url;
 
-    // reset overlay for new channel
+    // reset overlay when channel changes
     document.getElementById("overlay").style.display = "block";
 }
 
