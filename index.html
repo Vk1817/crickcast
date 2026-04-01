@@ -167,7 +167,7 @@ let allChannels = [];
 
 async function loadChannels() {
     try {
-        const res = await fetch("https://raw.githubusercontent.com/vaathala00/jow/main/output.json");
+        const res = await fetch("https://raw.githubusercontent.com/24sports-net/cookie-updater/refs/heads/main/cookie.json");
         const data = await res.json();
 
         const sports = data.filter(c => c.group && c.group.toLowerCase().includes("sports"));
