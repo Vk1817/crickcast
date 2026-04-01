@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -45,7 +44,6 @@ body {
     border: none;
 }
 
-/* 🔥 Overlay for Ad */
 .ad-overlay {
     position: absolute;
     top: 0;
@@ -118,7 +116,6 @@ body {
     border-radius: 50%;
 }
 </style>
-
 </head>
 
 <body>
@@ -130,15 +127,12 @@ body {
         <iframe id="videoFrame" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>
 
-```
-<!-- 🔥 AD OVERLAY -->
-<div class="ad-overlay" id="adOverlay"></div>
+    <!-- 🔥 AD OVERLAY -->
+    <div class="ad-overlay" id="adOverlay"></div>
 
-<div class="control-bar">
-    <span id="currentChannelName">Loading...</span>
-</div>
-```
-
+    <div class="control-bar">
+        <span id="currentChannelName">Loading...</span>
+    </div>
 </div>
 
 <div class="live-box">● LIVE</div>
@@ -167,7 +161,8 @@ let allChannels = [];
 
 async function loadChannels() {
     try {
-        const res = await fetch("https://raw.githubusercontent.com/24sports-net/cookie-updater/refs/heads/main/cookie.json");
+        // ✅ FIXED RAW LINK
+        const res = await fetch("https://raw.githubusercontent.com/24sports-net/cookie-updater/main/cookie.json");
         const data = await res.json();
 
         const sports = data.filter(c => c.group && c.group.toLowerCase().includes("sports"));
@@ -185,12 +180,7 @@ async function loadChannels() {
             ["sony","ten","2"],
             ["sony","ten","3"],
             ["sony","ten","4"],
-            ["sony","ten","5"],
-            ["sony","liv","1"],
-            ["sony","liv","2"],
-            ["sony","liv","3"],
-            ["sony","liv","4"],
-            ["sony","liv","5"]
+            ["sony","ten","5"]
         ];
 
         let used = new Set();
@@ -232,7 +222,7 @@ function loadChannel(id) {
     const ch = allChannels.find(c => String(c.id) === String(id));
 
     if (ch) {
-        iframe.src = ch.link;
+        iframe.src = ch.link; // ⚠️ may not work for some channels (DRM)
         nameDisplay.textContent = ch.name;
         document.title = ch.name + " - Live";
     }
@@ -244,7 +234,7 @@ function changeChannel(id) {
 
 window.onload = loadChannels;
 
-// 🔥 FIRST CLICK AD (WORKING)
+// 🔥 FIRST CLICK AD
 overlay.addEventListener("click", () => {
     window.open("https://offstump.com", "_blank");
     overlay.style.display = "none";
