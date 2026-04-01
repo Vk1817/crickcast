@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TATA IPL 2026 Live</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>IPL 2026 Live</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 * {
@@ -16,7 +17,7 @@
 }
 
 body {
-    background: radial-gradient(circle at top, #140a2e, #020617);
+    background: radial-gradient(circle at top, #1a0b1f, #020617);
     color: white;
 }
 
@@ -24,57 +25,34 @@ body {
 .header {
     padding: 16px;
     text-align: center;
-    font-size: 22px;
     font-weight: 700;
-    background: linear-gradient(90deg, #6d28d9, #9333ea);
-    box-shadow: 0 4px 25px rgba(147,51,234,0.6);
+    font-size: 22px;
+    background: linear-gradient(90deg, #ff0066, #ff4d9d);
+    letter-spacing: 1px;
+    box-shadow: 0 4px 25px rgba(255,0,102,0.6);
 }
 
-/* CONTAINER */
+/* MAIN */
 .container {
     padding: 10px;
 }
 
-/* PLAYER BOX */
+/* PLAYER */
 .player-box {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    z-index: 1;
+    box-shadow: 0 0 40px rgba(255,0,102,0.4);
 }
 
-/* GLOW BORDER (FIXED) */
-.player-box::before {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    border-radius: 18px;
-    background: linear-gradient(270deg, #9333ea, #6d28d9, #9333ea);
-    background-size: 400% 400%;
-    animation: glow 6s ease infinite;
-    z-index: -1;
-    filter: blur(10px);
-    opacity: 0.7;
-}
-
-@keyframes glow {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-}
-
-/* IFRAME */
 .player-box iframe {
-    position: relative;
-    z-index: 2;
     width: 100%;
     height: 230px;
     border: none;
-    background: black;
 }
 
 /* LIVE BADGE */
-.live {
+.live-badge {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -83,12 +61,15 @@ body {
     border-radius: 8px;
     font-size: 12px;
     font-weight: bold;
-    z-index: 3;
 }
 
-/* CHANNEL SELECT */
+/* CHANNEL BAR */
 .channel-bar {
-    margin-top: 12px;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #020617, #1a0b1f);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
 }
 
 select {
@@ -106,43 +87,80 @@ select {
     margin-top: 12px;
     padding: 16px;
     border-radius: 16px;
-    background: rgba(255,255,255,0.05);
+    background: linear-gradient(145deg, rgba(255,0,102,0.08), rgba(255,255,255,0.02));
     backdrop-filter: blur(12px);
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
 }
 
-/* SOCIAL BUTTONS */
-.row {
+/* TEXT */
+.card h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.card p {
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+/* BUTTONS */
+.social-row {
     display: flex;
     gap: 10px;
     margin-top: 12px;
 }
 
+/* BUTTON */
 .btn {
     flex: 1;
     padding: 13px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     border-radius: 12px;
-    color: white;
     text-decoration: none;
+    color: white;
     font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn img {
+    width: 20px;
+    height: 20px;
 }
 
 /* COLORS */
 .telegram {
-    background: linear-gradient(135deg, #2563eb, #9333ea);
+    background: linear-gradient(135deg, #ff0066, #ff4d9d);
 }
 
 .instagram {
-    background: linear-gradient(135deg, #ff0066, #9333ea);
+    background: linear-gradient(135deg, #ff4d9d, #ff0066);
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255,0,102,0.6);
 }
 
 /* BANNER */
+.banner {
+    margin-top: 12px;
+}
+
 .banner img {
     width: 100%;
     border-radius: 14px;
-    margin-top: 14px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+/* FOOTER SPACE FIX */
+.footer-space {
+    height: 10px;
 }
 </style>
+
 </head>
 
 <body>
@@ -152,12 +170,12 @@ select {
 <div class="container">
 
     <!-- PLAYER -->
-    <div class="player-box" onclick="playWithAd()">
-        <div class="live">🔴 LIVE</div>
-        <iframe id="player" src="" allowfullscreen></iframe>
+    <div class="player-box">
+        <div class="live-badge">🔴 LIVE</div>
+        <iframe id="player" src="https://ss1h.pages.dev/" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
-    <!-- CHANNEL -->
+    <!-- CHANNEL SELECT -->
     <div class="channel-bar">
         <select onchange="changeChannel(this.value)">
             <option value="https://ss1h.pages.dev/">Star Sports 1 Hindi HD</option>
@@ -169,12 +187,22 @@ select {
 
     <!-- COMMUNITY -->
     <div class="card">
-        <h3>🚀 Stay Connected</h3>
-        <p>Join our community for live updates, backup links & exclusive IPL content.</p>
+        <h3>🚀 Stay Connected with CrickCast</h3>
+        <p>
+            Get instant IPL updates, backup streaming links, and exclusive match content.
+            Join our growing cricket community and never miss a live moment.
+        </p>
 
-        <div class="row">
-            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn telegram">📢 Telegram</a>
-            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn instagram">📸 Instagram</a>
+        <div class="social-row">
+            <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn telegram">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
+                Telegram
+            </a>
+
+            <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn instagram">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
+                Instagram
+            </a>
         </div>
     </div>
 
@@ -185,27 +213,13 @@ select {
         </a>
     </div>
 
+    <div class="footer-space"></div>
+
 </div>
 
 <script>
-let currentChannel = "https://ss1h.pages.dev/";
-let adShown = false;
-
 function changeChannel(url) {
-    currentChannel = url;
     document.getElementById("player").src = url;
-}
-
-function playWithAd() {
-    if (!adShown) {
-        adShown = true;
-        window.open("https://wa.me/447955881183", "_blank");
-        setTimeout(() => {
-            document.getElementById("player").src = currentChannel;
-        }, 500);
-    } else {
-        document.getElementById("player").src = currentChannel;
-    }
 }
 </script>
 
