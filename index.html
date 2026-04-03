@@ -16,13 +16,11 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* LIGHTER IPL BACKGROUND */
 body {
     background: linear-gradient(180deg, #0f172a, #1e293b);
     color: white;
 }
 
-/* HEADER (IPL BLUE + GOLD) */
 .header {
     padding: 16px;
     text-align: center;
@@ -33,12 +31,10 @@ body {
     box-shadow: 0 4px 20px rgba(37,99,235,0.4);
 }
 
-/* MAIN */
 .container {
     padding: 10px;
 }
 
-/* PLAYER */
 .player-box {
     position: relative;
     border-radius: 16px;
@@ -52,7 +48,6 @@ body {
     border: none;
 }
 
-/* CLICK OVERLAY (ONLY FOR FIRST CLICK) */
 .click-overlay {
     position: absolute;
     inset: 0;
@@ -60,7 +55,6 @@ body {
     background: transparent;
 }
 
-/* LIVE BADGE */
 .live-badge {
     position: absolute;
     top: 10px;
@@ -73,7 +67,6 @@ body {
     font-weight: bold;
 }
 
-/* CHANNEL BAR */
 .channel-bar {
     margin-top: 10px;
     padding: 12px;
@@ -91,7 +84,6 @@ select {
     font-size: 15px;
 }
 
-/* CARD */
 .card {
     margin-top: 12px;
     padding: 16px;
@@ -100,7 +92,6 @@ select {
     backdrop-filter: blur(10px);
 }
 
-/* TEXT */
 .card h3 {
     font-size: 18px;
     margin-bottom: 6px;
@@ -111,14 +102,12 @@ select {
     opacity: 0.85;
 }
 
-/* SOCIAL */
 .social-row {
     display: flex;
     gap: 10px;
     margin-top: 12px;
 }
 
-/* BUTTON */
 .btn {
     flex: 1;
     padding: 13px;
@@ -138,7 +127,6 @@ select {
     height: 20px;
 }
 
-/* COLORS */
 .telegram {
     background: linear-gradient(135deg, #229ED9, #2563eb);
 }
@@ -152,7 +140,6 @@ select {
     box-shadow: 0 0 12px rgba(255,255,255,0.2);
 }
 
-/* BANNER */
 .banner {
     margin-top: 12px;
 }
@@ -162,7 +149,6 @@ select {
     border-radius: 14px;
 }
 
-/* FOOTER */
 .footer-space {
     height: 10px;
 }
@@ -176,17 +162,14 @@ select {
 
 <div class="container">
 
-    <!-- PLAYER -->
     <div class="player-box">
         <div class="live-badge">LIVE</div>
 
-        <!-- OVERLAY FOR FIRST CLICK -->
         <div class="click-overlay" id="overlay" onclick="handleAdClick()"></div>
 
         <iframe id="player" src="https://ss1h.pages.dev//" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
-    <!-- CHANNEL -->
     <div class="channel-bar">
         <select onchange="changeChannel(this.value)">
             <option value="https://ss1h.pages.dev/">Star Sports 1 Hindi HD</option>
@@ -198,7 +181,6 @@ select {
         </select>
     </div>
 
-    <!-- COMMUNITY -->
     <div class="card">
         <h3>🚀 Stay Connected with CrickCast</h3>
         <p>
@@ -218,9 +200,9 @@ select {
         </div>
     </div>
 
-    <!-- BANNER -->
+    <!-- UPDATED BANNER LINK -->
     <div class="banner">
-        <a href="https://wa.me/447955881183" target="_blank">
+        <a href="https://wa.me/447955881183?text=Hello%20I%20want%20to%20know%20more%20about%20Offstump%20🔥%20Please%20share%20details%20and%20offers.%20Channel%20Code:%20CRICKCAST%20LIVE%20LINKS" target="_blank">
             <img src="https://github.com/Vk1817/IPL1/blob/main/offstumphd.jpg?raw=true">
         </a>
     </div>
@@ -232,16 +214,11 @@ select {
 <script>
 function changeChannel(url) {
     document.getElementById("player").src = url;
-
-    // reset overlay when channel changes
     document.getElementById("overlay").style.display = "block";
 }
 
 function handleAdClick() {
-    // open ad
     window.open("https://offstump.com", "_blank");
-
-    // remove overlay so video works
     document.getElementById("overlay").style.display = "none";
 }
 </script>
