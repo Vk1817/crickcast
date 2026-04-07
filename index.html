@@ -48,6 +48,13 @@ body {
     border: none;
 }
 
+.click-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: transparent;
+}
+
 .live-badge {
     position: absolute;
     top: 10px;
@@ -149,7 +156,7 @@ select {
     <div class="player-box">
         <div class="live-badge">LIVE</div>
 
-        <!-- REMOVED CLICK OVERLAY -->
+        <div class="click-overlay" id="overlay" onclick="handleAdClick()"></div>
 
         <iframe id="player" src="https://ss1h.pages.dev/" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
@@ -190,8 +197,30 @@ select {
 </div>
 
 <script>
+let adShown = false;
+let clickCount = 0;
+
 function changeChannel(url) {
     document.getElementById("player").src = url;
+
+    // reset ad for new channel
+    adShown = false;
+    document.getElementById("overlay").style.display = "block";
+}
+
+function handleAdClick() {
+    if (adShown) return;
+
+    clickCount++;
+
+    if (clickCount % 2 === 1) {
+        window.open("https://t.me/addlist/6qALMSdKoVVkNWI1", "_blank");
+    } else {
+        window.open("https://www.instagram.com/crickcast.live", "_blank");
+    }
+
+    adShown = true;
+    document.getElementById("overlay").style.display = "none";
 }
 </script>
 
