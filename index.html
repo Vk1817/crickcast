@@ -48,13 +48,6 @@ body {
     border: none;
 }
 
-.click-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    background: transparent;
-}
-
 .live-badge {
     position: absolute;
     top: 10px;
@@ -140,15 +133,6 @@ select {
     box-shadow: 0 0 12px rgba(255,255,255,0.2);
 }
 
-.banner {
-    margin-top: 12px;
-}
-
-.banner img {
-    width: 100%;
-    border-radius: 14px;
-}
-
 .footer-space {
     height: 10px;
 }
@@ -165,7 +149,7 @@ select {
     <div class="player-box">
         <div class="live-badge">LIVE</div>
 
-        <div class="click-overlay" id="overlay" onclick="handleAdClick()"></div>
+        <!-- REMOVED CLICK OVERLAY -->
 
         <iframe id="player" src="https://ss1h.pages.dev/" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
@@ -174,12 +158,11 @@ select {
         <select onchange="changeChannel(this.value)">
             <option value="https://ss1h.pages.dev/">Star Sports 1 Hindi HD</option>
             <option value="https://hstar.pages.dev/">Jio Hotstar(ios)</option>
-             <option value="https://willow-cricbuxx.pages.dev/">Willow Cricbuzz</option>
+            <option value="https://willow-cricbuxx.pages.dev/">Willow Cricbuzz</option>
             <option value="https://ss1e.pages.dev/">Star Sports 1 English</option>
-            <option value="https://tvwap.pages.dev/?id=hotstar">ios and Windows </option>
+            <option value="https://tvwap.pages.dev/?id=hotstar">ios and Windows</option>
             <option value="https://ss1-tam.pages.dev/">Star Sports Tamil</option>
             <option value="https://ss1-tel.pages.dev/">Star Sports Telugu</option>
-        
         </select>
     </div>
 
@@ -202,13 +185,6 @@ select {
         </div>
     </div>
 
-    <!-- UPDATED BANNER LINK -->
-    <div class="banner">
-        <a href="https://wa.me/447955881183?text=Hello%20I%20want%20to%20know%20more%20about%20Offstump%20🔥%20Please%20share%20details%20and%20offers.%20Channel%20Code:%20CRICKCAST%20LIVE%20LINKS" target="_blank">
-            <img src="https://github.com/Vk1817/IPL1/blob/main/offstumphd.jpg?raw=true">
-        </a>
-    </div>
-
     <div class="footer-space"></div>
 
 </div>
@@ -216,12 +192,6 @@ select {
 <script>
 function changeChannel(url) {
     document.getElementById("player").src = url;
-    document.getElementById("overlay").style.display = "block";
-}
-
-function handleAdClick() {
-    window.open("https://offstump.com", "_blank");
-    document.getElementById("overlay").style.display = "none";
 }
 </script>
 
