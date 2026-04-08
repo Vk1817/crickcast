@@ -166,12 +166,13 @@ select {
             <option value="https://hstar-ios.pages.dev/">Hotstar(ios& Windows)</option>
             <option value="https://ss1h.pages.dev/">Star Sports 1 Hindi HD</option>
             <option value="https://hstar.pages.dev/">Jio Hotstar(ios)</option>
-             <option value="https://ss1e.pages.dev/">Star Sports 1 English</option>
+            <option value="https://ss1e.pages.dev/">Star Sports 1 English</option>
             <option value="https://ss1-tam.pages.dev/">Star Sports Tamil</option>
             <option value="https://ss1-tel.pages.dev/">Star Sports Telugu</option>
         </select>
     </div>
 
+    <!-- Social section kept (no ad redirects now) -->
     <div class="card">
         <h3>🚀 Stay Connected with CrickCast</h3>
         <p>
@@ -180,12 +181,10 @@ select {
 
         <div class="social-row">
             <a href="https://t.me/addlist/6qALMSdKoVVkNWI1" target="_blank" class="btn telegram">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
                 Telegram
             </a>
 
             <a href="https://www.instagram.com/crickcast.live" target="_blank" class="btn instagram">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
                 Instagram
             </a>
         </div>
@@ -197,7 +196,6 @@ select {
 
 <script>
 let adShown = false;
-let clickCount = 0;
 
 function changeChannel(url) {
     document.getElementById("player").src = url;
@@ -210,15 +208,19 @@ function changeChannel(url) {
 function handleAdClick() {
     if (adShown) return;
 
-    clickCount++;
+    // 🔥 MONETAG AD SCRIPT TRIGGER
+    // Loads ad ONLY on first click (best UX + high earnings)
+    let script = document.createElement("script");
+    script.src = "https://quge5.com/88/tag.min.js";
+    script.setAttribute("data-zone", "227716"); // your ad zone ID
+    script.async = true;
+    script.setAttribute("data-cfasync", "false");
 
-    if (clickCount % 2 === 1) {
-        window.open("https://t.me/addlist/6qALMSdKoVVkNWI1", "_blank");
-    } else {
-        window.open("https://www.instagram.com/crickcast.live", "_blank");
-    }
+    document.body.appendChild(script);
 
     adShown = true;
+
+    // allow user to watch after click
     document.getElementById("overlay").style.display = "none";
 }
 </script>
