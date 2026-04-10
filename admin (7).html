@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrickCast Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#f5c518;--navy:#04091a;--blue:#1740a8;--blue-lit:#2563eb;
+  --red:#c0392b;--white:#f0f6ff;--muted:#8099c4;
+  --green:#10b981;--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(23,64,168,0.3) 0%,transparent 65%);}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;align-items:center;justify-content:center;}
+.login-screen.hidden{display:none;}
+.login-box{background:rgba(255,255,255,0.04);border:1px solid rgba(245,197,24,0.25);border-radius:22px;padding:38px 28px;width:360px;display:flex;flex-direction:column;gap:14px;text-align:center;position:relative;overflow:hidden;}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.login-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.login-note{font-size:11px;color:rgba(16,185,129,0.8);background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:8px 12px;line-height:1.5;text-align:left;}
+.form-input{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;width:100%;}
+.form-input:focus{border-color:rgba(245,197,24,0.5);}
+.login-btn{background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:13px;color:white;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;letter-spacing:.3px;}
+.login-btn:hover{opacity:.9;transform:translateY(-1px);}
+.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.login-err{font-size:12px;color:#fca5a5;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px 12px;display:none;text-align:left;}
+.login-err.show{display:block;}
+
+/* SHELL */
+.shell{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:1;}
+.shell.show{display:flex;}
+
+/* TOPBAR */
+.topbar{background:rgba(4,9,26,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(245,197,24,0.18);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0;}
+.tb-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.tb-user{font-size:11px;color:var(--muted);letter-spacing:.5px;}
+.logout-btn{background:rgba(192,57,43,0.2);border:1px solid rgba(239,68,68,0.35);border-radius:8px;padding:6px 14px;color:#fca5a5;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.logout-btn:hover{background:rgba(192,57,43,0.4);}
+
+/* TABS */
+.tabs{display:flex;gap:4px;padding:14px 20px 0;border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{padding:10px 16px;border-radius:10px 10px 0 0;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);border:1px solid transparent;border-bottom:none;transition:.2s;white-space:nowrap;}
+.tab:hover{color:var(--white);background:rgba(255,255,255,0.04);}
+.tab.active{color:var(--white);background:rgba(255,255,255,0.07);border-color:var(--border);}
+
+.content{flex:1;padding:20px;max-width:920px;width:100%;margin:0 auto;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* SEC TITLE */
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--muted);margin:0 0 14px;display:flex;align-items:center;gap:10px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* MATCH CONFIG */
+.match-config-card{background:var(--card);border:1px solid rgba(245,197,24,0.2);border-radius:16px;padding:20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.match-config-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.match-preview{display:flex;align-items:center;justify-content:center;gap:20px;padding:16px 0;margin-bottom:16px;}
+.mp-team{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:80px;}
+.mp-abbr{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;}
+.mp-vs{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);letter-spacing:3px;}
+.match-selects{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:480px){.match-selects{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.form-select{background:#0d1e3d;border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;width:100%;cursor:pointer;}
+.form-select:focus{border-color:rgba(245,197,24,0.4);}
+.status-input{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;width:100%;}
+.status-input:focus{border-color:rgba(245,197,24,0.4);}
+.save-match-btn{margin-top:14px;width:100%;background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:12px;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;letter-spacing:.3px;}
+.save-match-btn:hover{opacity:.9;transform:translateY(-1px);}
+.save-match-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* CHANNEL MANAGER */
+.ch-mgr-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.add-btn{background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:10px 18px;color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;display:flex;align-items:center;gap:6px;}
+.add-btn:hover{opacity:.9;transform:translateY(-1px);}
+.ch-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.ch-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:.2s;}
+.ch-card:hover{border-color:rgba(255,255,255,0.14);}
+.ch-card.disabled{opacity:.45;}
+.ch-num-badge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Bebas Neue',sans-serif;flex-shrink:0;color:white;}
+.ch-card-info{flex:1;min-width:0;}
+.ch-card-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ch-card-url{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.ch-card-desc{font-size:11px;color:var(--muted);margin-top:1px;}
+.ch-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--white);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(255,255,255,0.12);}
+.icon-btn.del:hover{background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+.icon-btn.toggle-on{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:#6ee7b7;}
+.icon-btn.toggle-off{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#fca5a5;}
+.ch-tag-badge{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:700;letter-spacing:1px;flex-shrink:0;}
+.tag-hd{background:rgba(245,197,24,0.15);color:var(--gold);border:1px solid rgba(245,197,24,0.3);}
+.tag-live{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);}
+.tag-new{background:rgba(16,185,129,0.15);color:#6ee7b7;border:1px solid rgba(16,185,129,0.3);}
+
+/* SAVE CHANNELS BAR */
+.save-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(245,197,24,0.07);border:1px solid rgba(245,197,24,0.25);border-radius:12px;padding:12px 16px;margin-bottom:16px;}
+.save-bar-text{font-size:13px;color:var(--gold);}
+.save-channels-btn{background:linear-gradient(135deg,#92400e,#f59e0b);border:none;border-radius:8px;padding:9px 20px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.save-channels-btn:hover{opacity:.9;}
+.save-channels-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* GITHUB SETUP */
+.gh-setup{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:18px;margin-bottom:20px;}
+.gh-setup-title{font-size:13px;font-weight:600;color:#6ee7b7;margin-bottom:12px;letter-spacing:.5px;}
+.gh-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.gh-fields{grid-template-columns:1fr;}}
+.gh-note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;}
+.gh-note a{color:#93c5fd;text-decoration:none;}
+.gh-note a:hover{text-decoration:underline;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal{background:#0d1e3d;border:1px solid rgba(245,197,24,0.25);border-radius:20px;padding:28px;width:100%;max-width:460px;position:relative;overflow:hidden;}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn-save{flex:1;background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:12px;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-save:hover{opacity:.9;}
+.btn-cancel{padding:12px 20px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-cancel:hover{background:rgba(255,255,255,0.1);color:var(--white);}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.fl{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+.fi{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;width:100%;}
+.fi:focus{border-color:rgba(245,197,24,0.45);}
+.fs{background:#0d1e3d;border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;width:100%;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:#0d1e3d;border:1px solid rgba(16,185,129,0.4);border-radius:12px;padding:12px 22px;font-size:13px;color:#6ee7b7;z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+
+.empty-msg{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--navy);}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div style="font-size:32px">🏏</div>
+    <div class="login-logo">CrickCast Admin</div>
+    <div class="login-sub">Channel Manager</div>
+    <div class="login-note">
+      🔑 Enter your admin password to manage channels.<br>
+      Changes are pushed directly to your GitHub JSON files.
+    </div>
+    <input class="form-input" type="password" id="loginPw" placeholder="Admin Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Access Dashboard →</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div class="shell" id="shell">
+  <div class="topbar">
+    <div class="tb-brand">🏏 CrickCast Admin</div>
+    <div class="tb-right">
+      <span class="tb-user" id="tbUser">Admin</span>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('channels',this)">📡 Channel Manager</div>
+    <div class="tab" onclick="switchTab('match',this)">🏏 Match Setup</div>
+    <div class="tab" onclick="switchTab('settings',this)">⚙️ GitHub Settings</div>
+  </div>
+
+  <div class="content">
+
+    <!-- CHANNELS TAB -->
+    <div class="tab-pane active" id="tab-channels">
+      <div class="ch-mgr-header">
+        <div class="sec-title" style="margin:0;flex:1;">📡 Channel Manager</div>
+        <button class="add-btn" onclick="openModal()">＋ Add Channel</button>
+      </div>
+      <div class="save-bar">
+        <span class="save-bar-text">⚡ Make changes, then push to GitHub to go live.</span>
+        <button class="save-channels-btn" id="saveChannelsBtn" onclick="pushChannelsToGitHub()">🚀 Push to GitHub</button>
+      </div>
+      <div class="ch-list" id="chList"><div class="empty-msg">Loading channels...</div></div>
+    </div>
+
+    <!-- MATCH TAB -->
+    <div class="tab-pane" id="tab-match">
+      <div class="sec-title">🏏 Current Match Configuration</div>
+      <div class="match-config-card">
+        <div class="match-preview">
+          <div class="mp-team"><div class="mp-abbr" id="prev-abbr1">MI</div></div>
+          <div class="mp-vs">VS</div>
+          <div class="mp-team"><div class="mp-abbr" id="prev-abbr2">CSK</div></div>
+        </div>
+        <div class="match-selects">
+          <div class="form-group">
+            <div class="form-label">Team 1</div>
+            <select class="form-select" id="mTeam1" onchange="updatePreview()">
+              <option value="MI">MI — Mumbai Indians</option>
+              <option value="CSK">CSK — Chennai Super Kings</option>
+              <option value="RCB">RCB — Royal Challengers Bengaluru</option>
+              <option value="KKR">KKR — Kolkata Knight Riders</option>
+              <option value="GT">GT — Gujarat Titans</option>
+              <option value="RR">RR — Rajasthan Royals</option>
+              <option value="SRH">SRH — Sunrisers Hyderabad</option>
+              <option value="PBKS">PBKS — Punjab Kings</option>
+              <option value="LSG">LSG — Lucknow Super Giants</option>
+              <option value="DC">DC — Delhi Capitals</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Team 2</div>
+            <select class="form-select" id="mTeam2" onchange="updatePreview()">
+              <option value="CSK">CSK — Chennai Super Kings</option>
+              <option value="MI">MI — Mumbai Indians</option>
+              <option value="RCB">RCB — Royal Challengers Bengaluru</option>
+              <option value="KKR">KKR — Kolkata Knight Riders</option>
+              <option value="GT">GT — Gujarat Titans</option>
+              <option value="RR">RR — Rajasthan Royals</option>
+              <option value="SRH">SRH — Sunrisers Hyderabad</option>
+              <option value="PBKS">PBKS — Punjab Kings</option>
+              <option value="LSG">LSG — Lucknow Super Giants</option>
+              <option value="DC">DC — Delhi Capitals</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:12px;">
+          <div class="form-label">Match Status Text</div>
+          <input class="status-input" id="mStatus" value="LIVE NOW" placeholder="e.g. LIVE NOW / TODAY 7:30 PM">
+        </div>
+        <button class="save-match-btn" id="saveMatchBtn" onclick="saveMatch()">🚀 Push Match to GitHub</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-pane" id="tab-settings">
+      <div class="sec-title">⚙️ GitHub Configuration</div>
+      <div class="gh-setup">
+        <div class="gh-setup-title">🔗 Connect to your GitHub repository</div>
+        <div class="gh-fields">
+          <div class="fg" style="margin:0;">
+            <div class="fl">GitHub Username</div>
+            <input class="fi" id="ghUser" placeholder="e.g. Vk1817">
+          </div>
+          <div class="fg" style="margin:0;">
+            <div class="fl">Repository Name</div>
+            <input class="fi" id="ghRepo" placeholder="e.g. crickcast">
+          </div>
+          <div class="fg" style="margin:0;">
+            <div class="fl">channels.json path</div>
+            <input class="fi" id="ghChannelsPath" placeholder="channels.json">
+          </div>
+          <div class="fg" style="margin:0;">
+            <div class="fl">match.json path</div>
+            <input class="fi" id="ghMatchPath" placeholder="match.json">
+          </div>
+        </div>
+        <div class="fg" style="margin-top:12px;margin-bottom:0;">
+          <div class="fl">GitHub Personal Access Token (PAT)</div>
+          <input class="fi" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        </div>
+        <div class="gh-note">
+          ℹ️ Create a PAT at <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> with <strong>repo</strong> scope.<br>
+          Your token is saved only in this browser session and never sent anywhere except GitHub's API.
+        </div>
+        <button class="save-match-btn" style="margin-top:14px;" onclick="saveSettings()">💾 Save Settings</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHANNEL MODAL -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Add Channel</div>
+    <input type="hidden" id="editIdx">
+    <div class="fg"><div class="fl">Channel Name *</div><input class="fi" id="fName" placeholder="e.g. Star Sports 1 Hindi HD"></div>
+    <div class="fg"><div class="fl">Stream URL / iFrame URL *</div><input class="fi" id="fUrl" placeholder="https://... or .m3u8 link"></div>
+    <div class="fg"><div class="fl">Description</div><input class="fi" id="fDesc" placeholder="e.g. HD Quality • Hindi Commentary"></div>
+    <div class="form-row">
+      <div class="fg" style="margin:0;"><div class="fl">Tag</div>
+        <select class="fs" id="fTag">
+          <option value="live">LIVE</option>
+          <option value="hd">HD</option>
+          <option value="new">NEW</option>
+        </select>
+      </div>
+      <div class="fg" style="margin:0;"><div class="fl">Status</div>
+        <select class="fs" id="fEnabled">
+          <option value="true">✅ Enabled</option>
+          <option value="false">❌ Disabled</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveChannel()">💾 Save Channel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  ADMIN PASSWORD  — change this to something secure
+// ══════════════════════════════════════════════════════
+const ADMIN_PASSWORD = 'crickcast2026';
+
+const BG_COLORS = [
+  'linear-gradient(135deg,#1e40af,#2563eb)',
+  'linear-gradient(135deg,#92400e,#f59e0b)',
+  'linear-gradient(135deg,#3b0764,#7c3aed)',
+  'linear-gradient(135deg,#064e3b,#059669)',
+  'linear-gradient(135deg,#881337,#e11d48)',
+  'linear-gradient(135deg,#1e3a5f,#0ea5e9)',
+  'linear-gradient(135deg,#3f3f46,#a1a1aa)',
+];
+
+// In-memory channel list (loaded from GitHub on login)
+let channels = [];
+
+// ── GitHub helpers ──
+function getGHConfig(){
+  return {
+    user:         sessionStorage.getItem('gh_user')   || 'Vk1817',
+    repo:         sessionStorage.getItem('gh_repo')   || 'crickcast',
+    chPath:       sessionStorage.getItem('gh_chPath') || 'channels.json',
+    matchPath:    sessionStorage.getItem('gh_matchPath') || 'match.json',
+    token:        sessionStorage.getItem('gh_token')  || '',
+  };
+}
+
+function rawURL(path){
+  const c = getGHConfig();
+  return `https://raw.githubusercontent.com/${c.user}/${c.repo}/main/${path}?_=${Date.now()}`;
+}
+
+async function ghGetFileSHA(path){
+  const c = getGHConfig();
+  const res = await fetch(
+    `https://api.github.com/repos/${c.user}/${c.repo}/contents/${path}`,
+    { headers: { Authorization: `token ${c.token}`, Accept: 'application/vnd.github.v3+json' } }
+  );
+  if(!res.ok) return null;
+  const d = await res.json();
+  return d.sha || null;
+}
+
+async function ghPutFile(path, content, message){
+  const c = getGHConfig();
+  if(!c.token){ showToast('No GitHub token set. Go to Settings tab.','err'); return false; }
+  const sha = await ghGetFileSHA(path);
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: 'main' };
+  if(sha) body.sha = sha;
+  const res = await fetch(
+    `https://api.github.com/repos/${c.user}/${c.repo}/contents/${path}`,
+    {
+      method: 'PUT',
+      headers: { Authorization: `token ${c.token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }
+  );
+  return res.ok;
+}
+
+// ── Auth ──
+window.doLogin = function(){
+  const pw  = document.getElementById('loginPw').value;
+  const err = document.getElementById('loginErr');
+  err.classList.remove('show');
+  if(pw !== ADMIN_PASSWORD){
+    err.textContent = 'Wrong password. Try again.';
+    err.classList.add('show');
+    return;
+  }
+  sessionStorage.setItem('cc_admin','1');
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('shell').classList.add('show');
+  loadSettings();
+  loadChannelsFromGitHub();
+  loadMatchFromGitHub();
+};
+
+window.doLogout = function(){
+  sessionStorage.removeItem('cc_admin');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('shell').classList.remove('show');
+};
+
+// Auto-restore session
+if(sessionStorage.getItem('cc_admin')==='1'){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('shell').classList.add('show');
+  loadSettings();
+}
+
+// ── Settings ──
+function loadSettings(){
+  const c = getGHConfig();
+  document.getElementById('ghUser').value        = c.user;
+  document.getElementById('ghRepo').value        = c.repo;
+  document.getElementById('ghChannelsPath').value = c.chPath;
+  document.getElementById('ghMatchPath').value   = c.matchPath;
+  document.getElementById('ghToken').value       = c.token;
+}
+
+window.saveSettings = function(){
+  sessionStorage.setItem('gh_user',     document.getElementById('ghUser').value.trim());
+  sessionStorage.setItem('gh_repo',     document.getElementById('ghRepo').value.trim());
+  sessionStorage.setItem('gh_chPath',   document.getElementById('ghChannelsPath').value.trim());
+  sessionStorage.setItem('gh_matchPath',document.getElementById('ghMatchPath').value.trim());
+  sessionStorage.setItem('gh_token',    document.getElementById('ghToken').value.trim());
+  showToast('Settings saved ✓');
+  loadChannelsFromGitHub();
+  loadMatchFromGitHub();
+};
+
+// ── Load channels ──
+async function loadChannelsFromGitHub(){
+  const c = getGHConfig();
+  document.getElementById('chList').innerHTML = '<div class="empty-msg">⏳ Loading from GitHub...</div>';
+  try {
+    const res = await fetch(rawURL(c.chPath));
+    if(!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    channels = (data.channels || []).sort((a,b) => (a.order||0)-(b.order||0));
+    renderChannelList();
+  } catch(e){
+    document.getElementById('chList').innerHTML = '<div class="empty-msg">⚠️ Could not load channels.json from GitHub. Check Settings.</div>';
+  }
+}
+
+function renderChannelList(){
+  const list = document.getElementById('chList');
+  if(!channels.length){ list.innerHTML='<div class="empty-msg">No channels yet. Click "+ Add Channel".</div>'; return; }
+  list.innerHTML = channels.map((ch,i) => {
+    const bg = BG_COLORS[i % BG_COLORS.length];
+    const tc = ch.tag==='hd'?'tag-hd':ch.tag==='new'?'tag-new':'tag-live';
+    const tt = ch.tag==='hd'?'HD':ch.tag==='new'?'NEW':'LIVE';
+    const isEnabled = ch.enabled !== false;
+    return `<div class="ch-card${isEnabled?'':' disabled'}">
+      <div class="ch-num-badge" style="background:${bg}">${i+1}</div>
+      <div class="ch-card-info">
+        <div class="ch-card-name">${ch.name}</div>
+        <div class="ch-card-desc">${ch.desc||''}</div>
+        <div class="ch-card-url">${ch.url}</div>
+      </div>
+      <span class="ch-tag-badge ${tc}">${tt}</span>
+      <div class="ch-actions">
+        <button class="icon-btn" title="Move Up"   onclick="moveChannel(${i},-1)">▲</button>
+        <button class="icon-btn" title="Move Down" onclick="moveChannel(${i},1)">▼</button>
+        <button class="icon-btn ${isEnabled?'toggle-on':'toggle-off'}" title="${isEnabled?'Disable':'Enable'} Channel" onclick="toggleChannel(${i})">
+          ${isEnabled?'👁️':'🚫'}
+        </button>
+        <button class="icon-btn" title="Edit" onclick="openModal(${i})">✏️</button>
+        <button class="icon-btn del" title="Delete" onclick="deleteChannel(${i})">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Channel operations (in-memory, push to save) ──
+window.moveChannel = function(idx, dir){
+  const ni = idx + dir;
+  if(ni < 0 || ni >= channels.length) return;
+  [channels[idx], channels[ni]] = [channels[ni], channels[idx]];
+  channels.forEach((c,i) => c.order = i);
+  renderChannelList();
+  showToast('Reordered — push to save ✓');
+};
+
+window.toggleChannel = function(idx){
+  channels[idx].enabled = channels[idx].enabled === false ? true : false;
+  renderChannelList();
+  showToast(channels[idx].enabled ? 'Channel enabled — push to save ✓' : 'Channel disabled — push to save ✓');
+};
+
+window.deleteChannel = function(idx){
+  if(!confirm(`Delete "${channels[idx].name}"?`)) return;
+  channels.splice(idx, 1);
+  channels.forEach((c,i) => c.order = i);
+  renderChannelList();
+  showToast('Deleted — push to save');
+};
+
+// ── Push to GitHub ──
+window.pushChannelsToGitHub = async function(){
+  const btn = document.getElementById('saveChannelsBtn');
+  btn.disabled = true; btn.textContent = '⏳ Pushing...';
+  const c = getGHConfig();
+  const content = JSON.stringify({ channels }, null, 2);
+  const ok = await ghPutFile(c.chPath, content, 'Update channels.json via Admin');
+  btn.disabled = false; btn.textContent = '🚀 Push to GitHub';
+  if(ok){
+    showToast('channels.json pushed to GitHub ✓');
+  } else {
+    showToast('Push failed — check token & repo in Settings','err');
+  }
+};
+
+// ── Modal ──
+window.openModal = function(idx){
+  const isEdit = idx !== undefined;
+  document.getElementById('modalTitle').textContent = isEdit ? 'Edit Channel' : 'Add Channel';
+  document.getElementById('editIdx').value = isEdit ? idx : '';
+  if(isEdit){
+    const ch = channels[idx];
+    document.getElementById('fName').value    = ch.name  || '';
+    document.getElementById('fUrl').value     = ch.url   || '';
+    document.getElementById('fDesc').value    = ch.desc  || '';
+    document.getElementById('fTag').value     = ch.tag   || 'live';
+    document.getElementById('fEnabled').value = String(ch.enabled !== false);
+  } else {
+    ['fName','fUrl','fDesc'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('fTag').value     = 'live';
+    document.getElementById('fEnabled').value = 'true';
+  }
+  document.getElementById('modalOverlay').classList.remove('hidden');
+};
+
+window.closeModal = () => document.getElementById('modalOverlay').classList.add('hidden');
+
+window.saveChannel = function(){
+  const name    = document.getElementById('fName').value.trim();
+  const url     = document.getElementById('fUrl').value.trim();
+  const desc    = document.getElementById('fDesc').value.trim();
+  const tag     = document.getElementById('fTag').value;
+  const enabled = document.getElementById('fEnabled').value === 'true';
+  const idxStr  = document.getElementById('editIdx').value;
+  if(!name || !url){ showToast('Name and URL are required','err'); return; }
+
+  if(idxStr !== ''){
+    const idx = parseInt(idxStr);
+    channels[idx] = { ...channels[idx], name, url, desc, tag, enabled };
+    showToast('Channel updated — push to save ✓');
+  } else {
+    const newId = 'ch' + Date.now();
+    channels.push({ id: newId, name, url, desc, tag, enabled, order: channels.length });
+    showToast('Channel added — push to save ✓');
+  }
+  closeModal();
+  renderChannelList();
+};
+
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===document.getElementById('modalOverlay')) closeModal(); });
+
+// ── Match ──
+async function loadMatchFromGitHub(){
+  const c = getGHConfig();
+  try {
+    const res = await fetch(rawURL(c.matchPath));
+    if(!res.ok) return;
+    const m = await res.json();
+    document.getElementById('mTeam1').value = m.team1 || 'MI';
+    document.getElementById('mTeam2').value = m.team2 || 'CSK';
+    document.getElementById('mStatus').value = m.status || 'LIVE NOW';
+    updatePreview();
+  } catch(e){}
+}
+
+window.updatePreview = function(){
+  document.getElementById('prev-abbr1').textContent = document.getElementById('mTeam1').value;
+  document.getElementById('prev-abbr2').textContent = document.getElementById('mTeam2').value;
+};
+
+window.saveMatch = async function(){
+  const t1 = document.getElementById('mTeam1').value;
+  const t2 = document.getElementById('mTeam2').value;
+  const st = document.getElementById('mStatus').value.trim() || 'LIVE NOW';
+  if(t1===t2){ showToast('Teams cannot be the same','err'); return; }
+  const btn = document.getElementById('saveMatchBtn');
+  btn.disabled = true; btn.textContent = '⏳ Pushing...';
+  const c = getGHConfig();
+  const content = JSON.stringify({ team1: t1, team2: t2, status: st }, null, 2);
+  const ok = await ghPutFile(c.matchPath, content, 'Update match.json via Admin');
+  btn.disabled = false; btn.textContent = '🚀 Push Match to GitHub';
+  showToast(ok ? 'match.json pushed ✓' : 'Push failed — check Settings','err');
+  if(ok) showToast('match.json pushed to GitHub ✓');
+};
+
+// ── Tabs ──
+window.switchTab = function(name, el){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='channels') loadChannelsFromGitHub();
+};
+
+// ── Toast ──
+function showToast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type==='err'?' err':'');
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+window.showToast = showToast;
+
+// ── Init on session restore ──
+if(sessionStorage.getItem('cc_admin')==='1'){
+  loadChannelsFromGitHub();
+  loadMatchFromGitHub();
+}
+</script>
+</body>
+</html>
