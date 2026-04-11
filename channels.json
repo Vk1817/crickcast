@@ -1,47 +1,75 @@
 [
   {
     "id": "ch1",
-    "name": "Star Sports 1 Hindi HD",
-    "desc": "HD Quality • Hindi Commentary",
-    "url": "https://ss1h.pages.dev/",
-    "tag": "hd",
-    "enabled": false,
-    "order": 0
-  },
-  {
-    "id": "ch2",
     "name": "Hotstar",
     "desc": "iOS & Windows",
     "url": "https://hstar-ios.pages.dev/",
     "tag": "live",
     "enabled": true,
-    "order": 1
+    "order": 0
   },
   {
+    "id": "ch2",
+    "name": "Star Sports 1 Hindi HD",
+    "desc": "HD Quality • Hindi Commentary",
+    "url": "https://ss1h.pages.dev/",
+    "tag": "hd",
+    "enabled": true,
+    "order": 1
+  },
+  
+  {
     "id": "ch3",
-    "name": "Willow English",
-    "desc": "English Commentary",
+    "name": "Willow Hindi",
+    "desc": "Hindi Commentary",
     "url": "https://elizabeth-improve-sophisticated-field.trycloudflare.com/live_stream.m3u8",
     "tag": "live",
     "enabled": true,
     "order": 2
   },
-  {
+    {
     "id": "ch4",
-    "name": "Star Sports Tamil",
-    "desc": "Tamil Commentary",
-    "url": "https://ss1-tam.pages.dev/",
+    "name": "Willow English",
+    "desc": "English Commentary",
+    "url": "https://elizabeth-improve-sophisticated-field.trycloudflare.com/live_stream.m3u8",
     "tag": "live",
     "enabled": true,
     "order": 3
   },
-  {
+   {
     "id": "ch5",
+    "name": "Star Sports English",
+    "desc": "English Commentary",
+    "url": "https://ss1e.pages.dev/",
+    "tag": "live",
+    "enabled": true,
+    "order": 4
+  },
+   {
+    "id": "ch6",
+    "name": "Hub Sports",
+    "desc": "English Commentary",
+    "url": "https://ss1e.pages.dev/",
+    "tag": "live",
+    "enabled": true,
+    "order": 5
+  },
+  {
+    "id": "ch7",
+    "name": "Star Sports Tamil",
+    "desc": "Tamil Commentary",
+    "url": "https://ss1-tam.pages.dev/",
+    "tag": "live",
+    "enabled": false,
+    "order": 6
+  },
+  {
+    "id": "ch8",
     "name": "Star Sports Telugu",
     "desc": "Telugu Commentary",
     "url": "https://ss1-tel.pages.dev/",
     "tag": "live",
-    "enabled": true,
-    "order": 4
+    "enabled": false,
+    "order": 7
   }
 ]
