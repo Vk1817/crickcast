@@ -6,7 +6,7 @@
     "url": "https://hstar-ios.pages.dev/",
     "tag": "live",
     "enabled": true,
-    "order": 1
+    "order": 3
   },
   {
     "id": "ch2",
@@ -15,7 +15,7 @@
     "url": "https://ss1h.pages.dev/",
     "tag": "hd",
     "enabled": true,
-    "order": 1
+    "order": 0
   },
   
   {
@@ -34,7 +34,7 @@
     "url": "https://willow-cricbuxx.pages.dev/",
     "tag": "live",
     "enabled": true,
-    "order": 0
+    "order": 1
   },
    {
     "id": "ch5",
