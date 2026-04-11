@@ -24,7 +24,7 @@
     "desc": "Hindi Commentary",
     "url": "https://elizabeth-improve-sophisticated-field.trycloudflare.com/live_stream.m3u8",
     "tag": "live",
-    "enabled": true,
+    "enabled": false,
     "order": 3
   },
     {
