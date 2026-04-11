@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrickCast Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#f5c518;--navy:#04091a;--blue:#1740a8;--blue-lit:#2563eb;--red:#c0392b;--white:#f0f6ff;--muted:#8099c4;--green:#10b981;--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(23,64,168,0.3) 0%,transparent 65%);}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;align-items:center;justify-content:center;}
+.login-screen.hidden{display:none;}
+.login-box{background:var(--card);border:1px solid rgba(245,197,24,0.25);border-radius:22px;padding:38px 28px;width:340px;display:flex;flex-direction:column;gap:16px;text-align:center;position:relative;overflow:hidden;}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.login-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.login-note{font-size:11px;color:rgba(16,185,129,0.8);background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:8px 12px;line-height:1.5;}
+.fi{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;width:100%;}
+.fi:focus{border-color:rgba(245,197,24,0.5);}
+.login-btn{background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:13px;color:white;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;letter-spacing:.3px;}
+.login-btn:hover{opacity:.9;transform:translateY(-1px);}
+.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.login-err{font-size:12px;color:#fca5a5;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px 12px;display:none;}
+.login-err.show{display:block;}
+
+/* SHELL */
+.shell{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:1;}
+.shell.show{display:flex;}
+
+/* TOPBAR */
+.topbar{background:rgba(4,9,26,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(245,197,24,0.18);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0;}
+.tb-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.tb-user{font-size:11px;color:var(--muted);}
+.live-pip{display:flex;align-items:center;gap:5px;font-size:11px;color:#fca5a5;letter-spacing:1px;}
+.pip-dot{width:6px;height:6px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;animation:blink 1s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.logout-btn{background:rgba(192,57,43,0.2);border:1px solid rgba(239,68,68,0.35);border-radius:8px;padding:6px 14px;color:#fca5a5;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.logout-btn:hover{background:rgba(192,57,43,0.4);}
+
+/* TABS */
+.tabs{display:flex;gap:4px;padding:14px 20px 0;border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{padding:10px 16px;border-radius:10px 10px 0 0;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);border:1px solid transparent;border-bottom:none;transition:.2s;white-space:nowrap;}
+.tab:hover{color:var(--white);background:rgba(255,255,255,0.04);}
+.tab.active{color:var(--white);background:rgba(255,255,255,0.07);border-color:var(--border);}
+
+.content{flex:1;padding:20px;max-width:920px;width:100%;margin:0 auto;}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--muted);margin:0 0 14px;display:flex;align-items:center;gap:10px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+@media(min-width:600px){.stat-grid{grid-template-columns:repeat(4,1fr);}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sc-gold::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.sc-red::before{background:linear-gradient(90deg,transparent,#ef4444,transparent);}
+.sc-blue::before{background:linear-gradient(90deg,transparent,var(--blue-lit),transparent);}
+.sc-green::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.sc-icon{font-size:18px;margin-bottom:6px;}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;margin-bottom:3px;}
+.sc-gold .sc-val{background:linear-gradient(135deg,#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sc-red .sc-val{background:linear-gradient(135deg,#fff,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sc-blue .sc-val{background:linear-gradient(135deg,#fff,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sc-green .sc-val{background:linear-gradient(135deg,#fff,#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sc-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;}
+
+/* TABLE */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{padding:11px 16px;text-align:left;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);}
+.data-table td{padding:11px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:rgba(255,255,255,0.02);}
+.bar-wrap{display:flex;align-items:center;gap:8px;}
+.bar-bg{flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;max-width:100px;}
+.bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue-lit),var(--gold));}
+.rank{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.r1{background:linear-gradient(135deg,#b45309,#f59e0b);color:#000;}.r2{background:rgba(148,163,184,0.3);}.r3{background:rgba(120,53,15,0.5);color:#d97706;}.rn{background:rgba(255,255,255,0.06);color:var(--muted);}
+.empty-msg{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
+
+/* PRESENCE */
+.presence-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:20px;}
+.p-card{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
+.p-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.5s ease-in-out infinite;flex-shrink:0;}
+.p-id{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* MATCH CONFIG */
+.match-config-card{background:var(--card);border:1px solid rgba(245,197,24,0.2);border-radius:16px;padding:20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.match-config-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.match-preview{display:flex;align-items:center;justify-content:center;gap:20px;padding:16px 0;margin-bottom:16px;}
+.mp-team{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:80px;}
+.mp-logo{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.mp-logo img{width:100%;height:100%;object-fit:cover;display:block;}
+.mp-abbr{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;}
+.mp-vs{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);letter-spacing:3px;}
+.match-selects{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:480px){.match-selects{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.fl{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.fs{background:#0d1e3d;border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;width:100%;cursor:pointer;}
+.fs:focus{border-color:rgba(245,197,24,0.4);}
+.save-btn{margin-top:14px;width:100%;background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:12px;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;letter-spacing:.3px;}
+.save-btn:hover{opacity:.9;transform:translateY(-1px);}
+.save-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* CHANNEL MANAGER */
+.ch-mgr-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.add-btn{background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:10px 18px;color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;display:flex;align-items:center;gap:6px;}
+.add-btn:hover{opacity:.9;transform:translateY(-1px);}
+.ch-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.ch-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:.2s;}
+.ch-card:hover{border-color:rgba(255,255,255,0.14);}
+.ch-card.disabled{opacity:.45;}
+.ch-num-badge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Bebas Neue',sans-serif;flex-shrink:0;color:white;}
+.ch-card-info{flex:1;min-width:0;}
+.ch-card-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ch-card-url{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.ch-card-desc{font-size:11px;color:var(--muted);margin-top:1px;}
+.ch-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--white);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(255,255,255,0.12);}
+.icon-btn.del:hover{background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+.ch-tag-badge{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:700;letter-spacing:1px;flex-shrink:0;}
+.tag-hd{background:rgba(245,197,24,0.15);color:var(--gold);border:1px solid rgba(245,197,24,0.3);}
+.tag-live{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);}
+.tag-new{background:rgba(16,185,129,0.15);color:#6ee7b7;border:1px solid rgba(16,185,129,0.3);}
+
+/* CHANNEL ANALYTICS */
+.ch-analytics-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.ch-analytics-row:last-child{border-bottom:none;}
+.ca-name{font-size:13px;font-weight:600;}
+.ca-count{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);}
+.ca-bar-wrap{display:flex;align-items:center;gap:8px;min-width:120px;}
+.ca-bar-bg{flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
+.ca-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue-lit),var(--gold));}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal{background:#0d1e3d;border:1px solid rgba(245,197,24,0.25);border-radius:20px;padding:28px;width:100%;max-width:460px;position:relative;overflow:hidden;}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn-save{flex:1;background:linear-gradient(135deg,var(--blue),var(--blue-lit));border:none;border-radius:10px;padding:12px;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-save:hover{opacity:.9;}
+.btn-cancel{padding:12px 20px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-cancel:hover{background:rgba(255,255,255,0.1);color:var(--white);}
+
+.refresh-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.refresh-btn{background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.4);border-radius:8px;padding:7px 14px;color:#93c5fd;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.refresh-btn:hover{background:rgba(37,99,235,0.35);}
+.last-upd{font-size:11px;color:var(--muted);}
+
+.info-box{background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:rgba(245,197,24,0.8);line-height:1.6;margin-bottom:16px;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:#0d1e3d;border:1px solid rgba(16,185,129,0.4);border-radius:12px;padding:12px 22px;font-size:13px;color:#6ee7b7;z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--navy);}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div style="font-size:32px">🏏</div>
+    <div class="login-logo">CrickCast Admin</div>
+    <div class="login-sub">Secure Analytics Dashboard</div>
+    <div class="login-note">🔒 Secured with Firebase Authentication</div>
+    <input class="fi" type="email" id="loginEmail" placeholder="Admin Email" autocomplete="email">
+    <input class="fi" type="password" id="loginPw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Access Dashboard →</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div class="shell" id="shell">
+  <div class="topbar">
+    <div class="tb-brand">🏏 CrickCast Admin</div>
+    <div class="tb-right">
+      <div class="live-pip"><div class="pip-dot"></div><span id="tbLive">0</span> LIVE</div>
+      <span class="tb-user" id="tbUser"></span>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('match',this)">🏏 Match Setup</div>
+    <div class="tab" onclick="switchTab('channels',this)">📡 Channels</div>
+    <div class="tab" onclick="switchTab('analytics',this)">📊 Analytics</div>
+    <div class="tab" onclick="switchTab('chanalytics',this)">📺 Channel Stats</div>
+    <div class="tab" onclick="switchTab('live',this)">🟢 Live Sessions</div>
+  </div>
+
+  <div class="content">
+
+    <!-- MATCH SETUP -->
+    <div class="tab-pane active" id="tab-match">
+      <div class="sec-title">🏏 Current Match</div>
+      <div class="info-box">⚡ Changes save to Firebase instantly AND update <b>matches.json</b> instructions below. For instant update on site, also re-upload matches.json to Cloudflare.</div>
+      <div class="match-config-card">
+        <div class="match-preview">
+          <div class="mp-team">
+            <div class="mp-logo" id="prev1"><span id="prevAbbr1" style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;">MI</span></div>
+            <div class="mp-abbr" id="prevLabel1">MI</div>
+          </div>
+          <div class="mp-vs">VS</div>
+          <div class="mp-team">
+            <div class="mp-logo" id="prev2"><span id="prevAbbr2" style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;">CSK</span></div>
+            <div class="mp-abbr" id="prevLabel2">CSK</div>
+          </div>
+        </div>
+        <div class="match-selects">
+          <div class="fg"><div class="fl">Team 1</div>
+            <select class="fs" id="mTeam1" onchange="updatePreview()">
+              <option value="MI">MI — Mumbai Indians</option><option value="CSK">CSK — Chennai Super Kings</option>
+              <option value="RCB">RCB — Royal Challengers Bengaluru</option><option value="KKR">KKR — Kolkata Knight Riders</option>
+              <option value="GT">GT — Gujarat Titans</option><option value="RR">RR — Rajasthan Royals</option>
+              <option value="SRH">SRH — Sunrisers Hyderabad</option><option value="PBKS">PBKS — Punjab Kings</option>
+              <option value="LSG">LSG — Lucknow Super Giants</option><option value="DC">DC — Delhi Capitals</option>
+            </select>
+          </div>
+          <div class="fg"><div class="fl">Team 2</div>
+            <select class="fs" id="mTeam2" onchange="updatePreview()">
+              <option value="CSK">CSK — Chennai Super Kings</option><option value="MI">MI — Mumbai Indians</option>
+              <option value="RCB">RCB — Royal Challengers Bengaluru</option><option value="KKR">KKR — Kolkata Knight Riders</option>
+              <option value="GT">GT — Gujarat Titans</option><option value="RR">RR — Rajasthan Royals</option>
+              <option value="SRH">SRH — Sunrisers Hyderabad</option><option value="PBKS">PBKS — Punjab Kings</option>
+              <option value="LSG">LSG — Lucknow Super Giants</option><option value="DC">DC — Delhi Capitals</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg" style="margin-top:8px;"><div class="fl">Match Status</div><input class="fi" id="mStatus" value="LIVE NOW" placeholder="e.g. LIVE NOW / TODAY 7:30 PM"></div>
+        <div class="fg"><div class="fl">Venue</div><input class="fi" id="mVenue" placeholder="e.g. Wankhede Stadium, Mumbai"></div>
+        <button class="save-btn" id="saveMatchBtn" onclick="saveMatch()">💾 Save Match → Updates Live Site</button>
+        <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.6;">
+          📁 <b>Also update matches.json</b> with same data and re-upload to Cloudflare for fastest loading.
+        </div>
+      </div>
+    </div>
+
+    <!-- CHANNELS -->
+    <div class="tab-pane" id="tab-channels">
+      <div class="info-box">⚡ Changes here update the site via Firebase (cached 30 min). For instant update, also update <b>channels.json</b> and re-upload to Cloudflare.</div>
+      <div class="ch-mgr-header">
+        <div class="sec-title" style="margin:0;flex:1;">📡 Channel Manager</div>
+        <button class="add-btn" onclick="openModal()">＋ Add Channel</button>
+      </div>
+      <div class="ch-list" id="chList"><div class="empty-msg">Loading...</div></div>
+      <div style="margin-top:8px;">
+        <button class="save-btn" onclick="exportChannelsJSON()">📥 Download channels.json</button>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="tab-pane" id="tab-analytics">
+      <div class="refresh-row">
+        <div class="last-upd">Updated: <span id="lastUpd">—</span></div>
+        <button class="refresh-btn" onclick="loadAnalytics()">🔄 Refresh</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card sc-gold"><div class="sc-icon">👥</div><div class="sc-val" id="s-total">—</div><div class="sc-label">All-Time Visitors</div></div>
+        <div class="stat-card sc-red"><div class="sc-icon">🔴</div><div class="sc-val" id="s-live">—</div><div class="sc-label">Live Right Now</div></div>
+        <div class="stat-card sc-blue"><div class="sc-icon">📅</div><div class="sc-val" id="s-today">—</div><div class="sc-label">Today</div></div>
+        <div class="stat-card sc-green"><div class="sc-icon">🏆</div><div class="sc-val" id="s-peak">—</div><div class="sc-label">Peak Day</div></div>
+      </div>
+      <div class="sec-title">📈 Daily History</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Date</th><th>Visitors</th><th>Traffic</th></tr></thead>
+          <tbody id="dailyBody"><tr><td colspan="4" class="empty-msg">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHANNEL ANALYTICS -->
+    <div class="tab-pane" id="tab-chanalytics">
+      <div class="refresh-row">
+        <div class="last-upd">Today's channel selections</div>
+        <button class="refresh-btn" onclick="loadChannelAnalytics()">🔄 Refresh</button>
+      </div>
+      <div class="sec-title">📺 Channel Selections Today</div>
+      <div class="table-wrap" id="chAnalyticsWrap">
+        <div class="empty-msg">Loading...</div>
+      </div>
+      <div class="sec-title" style="margin-top:20px;">📅 Historical Channel Stats</div>
+      <div class="table-wrap" id="chHistoryWrap">
+        <div class="empty-msg">Loading...</div>
+      </div>
+    </div>
+
+    <!-- LIVE SESSIONS -->
+    <div class="tab-pane" id="tab-live">
+      <div class="sec-title">🟢 Active Sessions Right Now</div>
+      <div class="presence-grid" id="presenceGrid"><div class="empty-msg">Loading...</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHANNEL MODAL -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Add Channel</div>
+    <input type="hidden" id="editId">
+    <div class="fg"><div class="fl">Channel Name *</div><input class="fi" id="fName" placeholder="e.g. Star Sports 1 Hindi HD"></div>
+    <div class="fg"><div class="fl">Stream URL *</div><input class="fi" id="fUrl" placeholder="https://... or .m3u8 link"></div>
+    <div class="fg"><div class="fl">Description</div><input class="fi" id="fDesc" placeholder="e.g. HD Quality • Hindi Commentary"></div>
+    <div class="form-row">
+      <div class="fg" style="margin:0;"><div class="fl">Tag</div><select class="fs" id="fTag"><option value="live">LIVE</option><option value="hd">HD</option><option value="new">NEW</option></select></div>
+      <div class="fg" style="margin:0;"><div class="fl">Status</div><select class="fs" id="fEnabled"><option value="true">Enabled ✅</option><option value="false">Disabled ❌</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveChannel()">💾 Save Channel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, get, onValue, remove, push }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const FB = {
+  apiKey:"AIzaSyCjgRnxhusiLmwM0_R0QlFvDKeDqeqbZE8",
+  authDomain:"crickcast-fd9f8.firebaseapp.com",
+  databaseURL:"https://crickcast-fd9f8-default-rtdb.firebaseio.com",
+  projectId:"crickcast-fd9f8",
+  storageBucket:"crickcast-fd9f8.firebasestorage.app",
+  messagingSenderId:"440546833234",
+  appId:"1:440546833234:web:a4c31d67ead6a6704c408b"
+};
+
+const app  = initializeApp(FB);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+const TODAY = new Date().toISOString().slice(0,10).replace(/-/g,'');
+
+const LOGO_BASE = "https://upload.wikimedia.org/wikipedia/en/";
+const TEAMS = {
+  MI:{logo:"c/cd/Mumbai_Indians_Logo.svg"},CSK:{logo:"2/2b/Chennai_Super_Kings_Logo.svg"},
+  RCB:{logo:"2/2a/Royal_Challengers_Bangalore_2020.svg"},KKR:{logo:"4/4c/Kolkata_Knight_Riders_Logo.svg"},
+  GT:{logo:"0/09/Gujarat_Titans_Logo.svg"},RR:{logo:"6/60/Rajasthan_Royals_Logo.svg"},
+  SRH:{logo:"8/81/Sunrisers_Hyderabad.svg"},PBKS:{logo:"d/d4/Punjab_Kings_Logo.svg"},
+  LSG:{logo:"a/a6/Lucknow_Super_Giants_Logo.svg"},DC:{logo:"f/f5/Delhi_Capitals_Logo.svg"},
+};
+const BG_COLORS=['linear-gradient(135deg,#1e40af,#2563eb)','linear-gradient(135deg,#92400e,#f59e0b)','linear-gradient(135deg,#3b0764,#7c3aed)','linear-gradient(135deg,#064e3b,#059669)','linear-gradient(135deg,#881337,#e11d48)','linear-gradient(135deg,#1e3a5f,#0ea5e9)','linear-gradient(135deg,#3f3f46,#a1a1aa)'];
+
+/* ── AUTH ── */
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('shell').classList.add('show');
+    document.getElementById('tbUser').textContent = user.email;
+    startAll();
+  } else {
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('shell').classList.remove('show');
+  }
+});
+
+window.doLogin = async function() {
+  const email=document.getElementById('loginEmail').value.trim();
+  const pw=document.getElementById('loginPw').value;
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('loginErr');
+  err.classList.remove('show');
+  if(!email||!pw){err.textContent='Enter email and password.';err.classList.add('show');return;}
+  btn.disabled=true;btn.textContent='Signing in...';
+  try{
+    await signInWithEmailAndPassword(auth,email,pw);
+  }catch(e){
+    let msg='Wrong email or password.';
+    if(e.code==='auth/too-many-requests')msg='Too many attempts. Try later.';
+    err.textContent=msg;err.classList.add('show');
+  }
+  btn.disabled=false;btn.textContent='Access Dashboard →';
+};
+window.doLogout = () => signOut(auth);
+
+function startAll() {
+  loadMatchConfig();
+  loadChannels();
+  loadAnalytics();
+  loadChannelAnalytics();
+  startLiveListeners();
+}
+
+/* ── LIVE LISTENERS ── */
+function startLiveListeners() {
+  onValue(ref(db,'presence'), snap => {
+    const n=snap.exists()?Object.keys(snap.val()).length:0;
+    document.getElementById('tbLive').textContent=n;
+    document.getElementById('s-live').textContent=n;
+    renderPresence(snap.exists()?snap.val():{});
+  });
+  onValue(ref(db,`daily/${TODAY}`), snap=>{
+    document.getElementById('s-today').textContent=snap.exists()?(snap.val().count||0).toLocaleString():'0';
+  });
+}
+
+/* ── MATCH ── */
+window.updatePreview = function() {
+  const t1=document.getElementById('mTeam1').value;
+  const t2=document.getElementById('mTeam2').value;
+  document.getElementById('prevLabel1').textContent=t1;
+  document.getElementById('prevLabel2').textContent=t2;
+  document.getElementById('prevAbbr1').textContent=t1;
+  document.getElementById('prevAbbr2').textContent=t2;
+  loadLogoInto('prev1','prevAbbr1',t1);
+  loadLogoInto('prev2','prevAbbr2',t2);
+};
+
+function loadLogoInto(wrapId, fbId, code) {
+  const wrap=document.getElementById(wrapId);
+  const t=TEAMS[code];
+  if(!t)return;
+  const img=new Image();
+  img.onload=()=>{img.style.cssText='width:100%;height:100%;object-fit:cover;display:block;';wrap.innerHTML='';wrap.appendChild(img);};
+  img.onerror=()=>{wrap.innerHTML=`<span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;">${code}</span>`;};
+  img.src=LOGO_BASE+t.logo;
+}
+
+function loadMatchConfig() {
+  get(ref(db,'match_config')).then(snap=>{
+    const m=snap.exists()?snap.val():{team1:'MI',team2:'CSK',status:'LIVE NOW',venue:''};
+    document.getElementById('mTeam1').value=m.team1||'MI';
+    document.getElementById('mTeam2').value=m.team2||'CSK';
+    document.getElementById('mStatus').value=m.status||'LIVE NOW';
+    document.getElementById('mVenue').value=m.venue||'';
+    updatePreview();
+  });
+}
+
+window.saveMatch = async function() {
+  const t1=document.getElementById('mTeam1').value;
+  const t2=document.getElementById('mTeam2').value;
+  const st=document.getElementById('mStatus').value.trim()||'LIVE NOW';
+  const ve=document.getElementById('mVenue').value.trim();
+  const btn=document.getElementById('saveMatchBtn');
+  if(t1===t2){showToast('Teams cannot be the same','err');return;}
+  btn.disabled=true;btn.textContent='Saving...';
+  await set(ref(db,'match_config'),{team1:t1,team2:t2,status:st,venue:ve});
+  btn.disabled=false;btn.textContent='💾 Save Match → Updates Live Site';
+  showToast('Match updated ✓');
+
+  // Show matches.json content
+  const json=JSON.stringify({team1:t1,team2:t2,status:st,venue:ve},null,2);
+  downloadJSON('matches.json', json);
+};
+
+/* ── CHANNELS ── */
+window.loadChannels = function() {
+  onValue(ref(db,'channels_config'), snap=>{
+    const list=document.getElementById('chList');
+    if(!snap.exists()){list.innerHTML='<div class="empty-msg">No channels yet. Click "Add Channel".</div>';return;}
+    const channels=Object.entries(snap.val()).map(([k,v])=>({...v,_k:k})).sort((a,b)=>(a.order||0)-(b.order||0));
+    list.innerHTML=channels.map((ch,i)=>{
+      const bg=BG_COLORS[i%BG_COLORS.length];
+      const tc=ch.tag==='hd'?'tag-hd':ch.tag==='new'?'tag-new':'tag-live';
+      const tt=ch.tag==='hd'?'HD':ch.tag==='new'?'NEW':'LIVE';
+      return `<div class="ch-card${ch.enabled===false?' disabled':''}">
+        <div class="ch-num-badge" style="background:${bg}">${i+1}</div>
+        <div class="ch-card-info">
+          <div class="ch-card-name">${ch.name}</div>
+          <div class="ch-card-desc">${ch.desc||''}</div>
+          <div class="ch-card-url">${ch.url}</div>
+        </div>
+        <span class="ch-tag-badge ${tc}">${tt}</span>
+        <div class="ch-actions">
+          <button class="icon-btn" onclick="moveChannel('${ch._k}',-1)" title="Up">▲</button>
+          <button class="icon-btn" onclick="moveChannel('${ch._k}',1)" title="Down">▼</button>
+          <button class="icon-btn" onclick="toggleChannel('${ch._k}',${ch.enabled!==false})" title="Toggle">${ch.enabled===false?'👁️‍🗨️':'👁️'}</button>
+          <button class="icon-btn" onclick="openModal('${ch._k}')" title="Edit">✏️</button>
+          <button class="icon-btn del" onclick="deleteChannel('${ch._k}','${ch.name.replace(/'/g,'')}')">🗑️</button>
+        </div>
+      </div>`;
+    }).join('');
+  });
+};
+
+window.moveChannel=async function(k,dir){
+  const snap=await get(ref(db,'channels_config'));if(!snap.exists())return;
+  const chs=Object.entries(snap.val()).map(([k,v])=>({...v,_k:k})).sort((a,b)=>(a.order||0)-(b.order||0));
+  const idx=chs.findIndex(c=>c._k===k),ni=idx+dir;
+  if(ni<0||ni>=chs.length)return;
+  await set(ref(db,`channels_config/${chs[idx]._k}/order`),chs[ni].order||ni);
+  await set(ref(db,`channels_config/${chs[ni]._k}/order`),chs[idx].order||idx);
+  showToast('Reordered ✓');
+};
+window.toggleChannel=async function(k,cur){
+  await set(ref(db,`channels_config/${k}/enabled`),!cur);
+  showToast(cur?'Disabled':'Enabled ✓');
+};
+window.deleteChannel=async function(k,name){
+  if(!confirm(`Delete "${name}"?`))return;
+  await remove(ref(db,`channels_config/${k}`));showToast('Deleted');
+};
+
+window.openModal=async function(k){
+  document.getElementById('modalTitle').textContent=k?'Edit Channel':'Add Channel';
+  document.getElementById('editId').value=k||'';
+  if(k){
+    const snap=await get(ref(db,`channels_config/${k}`));
+    if(snap.exists()){const d=snap.val();document.getElementById('fName').value=d.name||'';document.getElementById('fUrl').value=d.url||'';document.getElementById('fDesc').value=d.desc||'';document.getElementById('fTag').value=d.tag||'live';document.getElementById('fEnabled').value=String(d.enabled!==false);}
+  }else{['fName','fUrl','fDesc'].forEach(i=>document.getElementById(i).value='');document.getElementById('fTag').value='live';document.getElementById('fEnabled').value='true';}
+  document.getElementById('modalOverlay').classList.remove('hidden');
+};
+window.closeModal=()=>document.getElementById('modalOverlay').classList.add('hidden');
+
+window.saveChannel=async function(){
+  const name=document.getElementById('fName').value.trim();
+  const url=document.getElementById('fUrl').value.trim();
+  const desc=document.getElementById('fDesc').value.trim();
+  const tag=document.getElementById('fTag').value;
+  const enabled=document.getElementById('fEnabled').value==='true';
+  const k=document.getElementById('editId').value;
+  if(!name||!url){showToast('Name and URL required','err');return;}
+  try{
+    if(k){
+      const snap=await get(ref(db,`channels_config/${k}`));
+      await set(ref(db,`channels_config/${k}`),{...(snap.exists()?snap.val():{}),name,url,desc,tag,enabled,id:k});
+      showToast('Channel updated ✓');
+    }else{
+      const snap=await get(ref(db,'channels_config'));
+      let mo=0;if(snap.exists())Object.values(snap.val()).forEach(c=>{if((c.order||0)>=mo)mo=(c.order||0)+1;});
+      const nr=push(ref(db,'channels_config'));
+      await set(nr,{id:nr.key,name,url,desc,tag,enabled,order:mo});
+      showToast('Channel added ✓');
+    }
+    closeModal();
+  }catch(e){showToast('Error: '+e.message,'err');}
+};
+
+/* ── EXPORT channels.json ── */
+window.exportChannelsJSON = async function() {
+  const snap=await get(ref(db,'channels_config'));
+  if(!snap.exists()){showToast('No channels to export','err');return;}
+  const channels=Object.values(snap.val()).sort((a,b)=>(a.order||0)-(b.order||0))
+    .map(({_k,...c})=>({id:c.id,name:c.name,desc:c.desc||'',url:c.url,tag:c.tag||'live',enabled:c.enabled!==false,order:c.order||0}));
+  downloadJSON('channels.json', JSON.stringify(channels,null,2));
+  showToast('channels.json downloaded ✓');
+};
+
+function downloadJSON(filename, content) {
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(content);
+  a.download=filename;a.click();
+}
+
+/* ── ANALYTICS ── */
+window.loadAnalytics = async function() {
+  document.getElementById('lastUpd').textContent=new Date().toLocaleTimeString();
+  const snap=await get(ref(db,'daily'));
+  if(!snap.exists()){
+    document.getElementById('dailyBody').innerHTML='<tr><td colspan="4" class="empty-msg">No data yet.</td></tr>';
+    document.getElementById('s-total').textContent='0';document.getElementById('s-peak').textContent='0';return;
+  }
+  const rows=Object.entries(snap.val()).map(([k,v])=>({date:k,count:v.count||0})).sort((a,b)=>b.date.localeCompare(a.date));
+  const total=rows.reduce((s,r)=>s+r.count,0);
+  const peak=Math.max(...rows.map(r=>r.count));
+  document.getElementById('s-total').textContent=total.toLocaleString();
+  document.getElementById('s-peak').textContent=peak.toLocaleString();
+  document.getElementById('dailyBody').innerHTML=rows.map((r,i)=>{
+    const pct=peak>0?Math.round(r.count/peak*100):0;
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    const d=`${r.date.slice(0,4)}-${r.date.slice(4,6)}-${r.date.slice(6,8)}`;
+    return `<tr><td><span class="rank ${rc}">${i+1}</span></td><td>${d}</td><td><strong>${r.count.toLocaleString()}</strong></td>
+    <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--muted)">${pct}%</span></div></td></tr>`;
+  }).join('');
+};
+
+/* ── CHANNEL ANALYTICS ── */
+window.loadChannelAnalytics = async function() {
+  // Today
+  const todaySnap=await get(ref(db,`ch_analytics/${TODAY}`));
+  const todayWrap=document.getElementById('chAnalyticsWrap');
+  if(!todaySnap.exists()){
+    todayWrap.innerHTML='<div class="empty-msg">No channel data today yet. Users will generate this as they select channels.</div>';
+  } else {
+    const data=todaySnap.val();
+    const rows=Object.entries(data).map(([k,v])=>({key:k,name:v.name||k,count:v.count||0})).sort((a,b)=>b.count-a.count);
+    const max=rows[0]?.count||1;
+    todayWrap.innerHTML=`<div>${rows.map((r,i)=>{
+      const pct=Math.round(r.count/max*100);
+      const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+      return `<div class="ch-analytics-row">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+          <span class="rank ${rc}">${i+1}</span>
+          <div class="ca-name">${r.name}</div>
+        </div>
+        <div class="ca-bar-wrap"><div class="ca-bar-bg"><div class="ca-bar-fill" style="width:${pct}%"></div></div>
+        <div class="ca-count">${r.count}</div></div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  // History (all days)
+  const allSnap=await get(ref(db,'ch_analytics'));
+  const histWrap=document.getElementById('chHistoryWrap');
+  if(!allSnap.exists()){
+    histWrap.innerHTML='<div class="empty-msg">No historical data yet.</div>';return;
+  }
+  // Aggregate across all days
+  const allData=allSnap.val();
+  const totals={};
+  Object.values(allData).forEach(day=>{
+    Object.entries(day).forEach(([k,v])=>{
+      if(!totals[k]) totals[k]={name:v.name||k,count:0};
+      totals[k].count+=(v.count||0);
+    });
+  });
+  const allRows=Object.values(totals).sort((a,b)=>b.count-a.count);
+  const allMax=allRows[0]?.count||1;
+  histWrap.innerHTML=`<table class="data-table"><thead><tr><th>#</th><th>Channel</th><th>Total Selections</th><th>Popularity</th></tr></thead><tbody>${
+    allRows.map((r,i)=>{
+      const pct=Math.round(r.count/allMax*100);
+      const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+      return `<tr><td><span class="rank ${rc}">${i+1}</span></td><td>${r.name}</td><td><strong>${r.count.toLocaleString()}</strong></td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--muted)">${pct}%</span></div></td></tr>`;
+    }).join('')
+  }</tbody></table>`;
+};
+
+/* ── PRESENCE ── */
+function renderPresence(data){
+  const keys=Object.keys(data);
+  document.getElementById('presenceGrid').innerHTML=keys.length?
+    keys.map(k=>`<div class="p-card"><div class="p-dot"></div><div class="p-id">${k.slice(0,12)}…</div></div>`).join(''):
+    '<div class="empty-msg">Nobody online right now.</div>';
+}
+
+/* ── TABS ── */
+window.switchTab=function(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='analytics')loadAnalytics();
+  if(name==='chanalytics')loadChannelAnalytics();
+};
+
+/* ── TOAST ── */
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(type==='err'?' err':'');
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+window.showToast=showToast;
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
