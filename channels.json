@@ -3,7 +3,7 @@
     "id": "ch1",
     "name": "Hotstar",
     "desc": "iOS & Windows",
-    "url": "https://hstar-ios.pages.dev/",
+    "url": "https://vsd202.okcdn.ru/cmaf/14551624190719/sig/KaWMOYBBroE/expires/1776074389670/srcIp/152.58.188.3/urls/185.226.55.81/clientType/36/srcAg/CHROME/mid/13626208503807/get/hls_13626208503807.9u5ys4FHwhw.m3u8",
     "tag": "live",
     "enabled": true,
     "order": 2
@@ -30,7 +30,7 @@
     {
     "id": "ch4",
     "name": "Willow English",
-    "desc": "English Commentary",
+    "desc": "English Commentary/ Use USA VPN",
     "url": "https://willow-cricbuxx.pages.dev/",
     "tag": "live",
     "enabled": true,
