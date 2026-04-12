@@ -3,10 +3,10 @@
     "id": "ch1",
     "name": "Hotstar",
     "desc": "iOS & Windows",
-    "url": "https://allrounder-live4.pages.dev/channel/hotstar",
+    "url": "https://hstar-ios.pages.dev/",
     "tag": "live",
     "enabled": true,
-    "order": 4
+    "order": 2
   },
   {
     "id": "ch2",
@@ -43,7 +43,7 @@
     "url": "https://allrounder-live4.pages.dev/star/star-1",
     "tag": "live",
     "enabled": true,
-    "order": 2
+    "order": 4
   },
    {
     "id": "ch6",
