@@ -34,7 +34,7 @@
     "url": "https://willow-cricbuxx.pages.dev/",
     "tag": "live",
     "enabled": true,
-    "order": 1
+    "order": 6
   },
    {
     "id": "ch5",
@@ -52,7 +52,7 @@
     "url": "https://allrounder-live4.pages.dev/channel/prime",
     "tag": "live",
     "enabled": true,
-    "order": 5
+    "order": 1
   },
   {
     "id": "ch7",
