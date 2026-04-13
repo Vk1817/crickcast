@@ -2,11 +2,11 @@
   {
     "id": "ch1",
     "name": "Hotstar",
-    "desc": "iOS & Windows 30 sec to Load",
-    "url": "https://vsd81.okcdn.ru/cmaf/14651575634687/sig/2B-LB06YLqk/expires/1776172185955/srcIp/47.31.66.154/urls/45.136.22.57/clientType/36/srcAg/CHROME/mid/13677913327615/get/hls_13677913327615.tKT1mKLFvBA.m3u8",
-    "tag": "live",
+    "desc": "iOS & Windows ",
+    "url": "",
+    "tag": "HD",
     "enabled": true,
-    "order": 2
+    "order": 0
   },
   {
     "id": "ch2",
@@ -15,7 +15,7 @@
     "url": "https://allrounder-live4.pages.dev/star/star-1-hindi",
     "tag": "hd",
     "enabled": true,
-    "order": 0
+    "order": 1
   },
   
   {
@@ -25,7 +25,7 @@
     "url": "https://starplay-cc.pages.dev/",
     "tag": "live",
     "enabled": true,
-    "order": 6
+    "order": 2
   },
     {
     "id": "ch4",
@@ -52,7 +52,7 @@
     "url": "https://allrounder-live4.pages.dev/channel/prime",
     "tag": "live",
     "enabled": true,
-    "order": 1
+    "order": 4
   },
   {
     "id": "ch7",
