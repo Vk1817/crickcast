@@ -34,7 +34,7 @@
     "url": "https://willow-cricbuxx.pages.dev/",
     "tag": "live",
     "enabled": true,
-    "order": 3
+    "order": 6
   },
    {
     "id": "ch5",
@@ -43,7 +43,7 @@
     "url": "https://allrounder-live5.pages.dev/star/star-1",
     "tag": "live",
     "enabled": true,
-    "order": 4
+    "order": 3
   },
    {
     "id": "ch6",
@@ -58,10 +58,10 @@
     "id": "ch7",
     "name": "Star Sports Tamil",
     "desc": "Tamil Commentary",
-    "url": "https://ss1-tam.pages.dev/",
+    "url": "https://allrounder-live5.pages.dev/star/tamil-1",
     "tag": "live",
     "enabled": false,
-    "order": 6
+    "order": 5
   },
   {
     "id": "ch8",
