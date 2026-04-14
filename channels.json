@@ -12,7 +12,7 @@
     "id": "ch2",
     "name": "Star Sports 2 Hindi HD",
     "desc": "HD Quality • Hindi Commentary",
-    "url": "https://allrounder-live4.pages.dev/star/star-1-hindi",
+    "url": "https://allrounder-live5.pages.dev/star/star-1-hindi",
     "tag": "hd",
     "enabled": true,
     "order": 1
@@ -40,7 +40,7 @@
     "id": "ch5",
     "name": "Star Sports English",
     "desc": "English Commentary",
-    "url": "https://allrounder-live4.pages.dev/star/star-1",
+    "url": "https://allrounder-live5.pages.dev/star/star-1",
     "tag": "live",
     "enabled": true,
     "order": 4
