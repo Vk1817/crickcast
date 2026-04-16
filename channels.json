@@ -3,7 +3,7 @@
     "id": "ch1", 
     "name": "Jiohotstar",
     "desc": "iOS & Windows ",
-    "url": "https://allrounder-live4.pages.dev/channel/hotstar",
+    "url": "https://allrounder-live5.pages.dev/channel/hotstar",
     "tag": "HD",
     "enabled": true,
     "order": 1
@@ -49,7 +49,7 @@
     "id": "ch6",
     "name": "Sky Sports",
     "desc": "English Commentary",
-    "url": "https://allrounder-live4.pages.dev/channel/prime",
+    "url": "https://allrounder-live5.pages.dev/channel/prime",
     "tag": "live",
     "enabled": true,
     "order": 4
